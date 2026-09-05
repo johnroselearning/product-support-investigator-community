@@ -1,0 +1,22 @@
+{
+  "name": "product-support-investigator",
+  "version": "0.1.0",
+  "description": "Evidence-first investigation of technical customer and product issues.",
+  "author": {
+    "name": "Support Investigator contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Product Support Investigator",
+    "shortDescription": "Evidence-first technical support investigation",
+    "longDescription": "Investigate API failures, authentication issues, webhooks, integrations, performance problems, regressions, and technical escalations using available evidence.",
+    "developerName": "Support Investigator contributors",
+    "category": "Productivity",
+    "capabilities": ["Analyze", "Investigate"],
+    "defaultPrompt": [
+      "Investigate this technical support issue using available evidence.",
+      "Rank likely causes and identify the next discriminating checks.",
+      "Draft a customer-safe escalation note."
+    ]
+  }
+}

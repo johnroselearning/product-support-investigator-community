@@ -1,0 +1,9 @@
+# Require the repository owner to review sensitive and general changes.
+* @johnroselearning
+
+# Security-sensitive integration and automation surfaces.
+/forge-app/ @johnroselearning
+/.github/ @johnroselearning
+/scripts/ @johnroselearning
+/SKILL.md @johnroselearning
+/skills/ @johnroselearning

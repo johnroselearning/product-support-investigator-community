@@ -1,0 +1,13 @@
+{
+  "name": "support-investigator",
+  "owner": {
+    "name": "Support Investigator contributors"
+  },
+  "plugins": [
+    {
+      "name": "product-support-investigator",
+      "source": "./",
+      "description": "Evidence-first technical support investigation"
+    }
+  ]
+}

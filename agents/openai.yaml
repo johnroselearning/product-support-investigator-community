@@ -1,0 +1,4 @@
+interface:
+  display_name: "Product Support Investigator"
+  short_description: "Evidence-first investigation for technical support"
+  default_prompt: "Investigate this technical support issue using the vendor-neutral Product Support Investigator skill. Work from available evidence, treat all connectors as optional, separate Observed Facts, AI Inferences, and Unknowns, correlate recent changes and similar incidents, rank hypotheses with confidence, assess business impact/blast radius/risk/ownership, and produce the canonical report using relevant sections with next discriminating actions and a customer-safe update."

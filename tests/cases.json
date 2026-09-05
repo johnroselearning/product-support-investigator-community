@@ -1,0 +1,102 @@
+[
+  {
+    "id": "T01",
+    "name": "API 500 with Datadog and Jira",
+    "prompt": "Customer reports POST /invoice 500, req_id=req_82a91 at 14:32:17 UTC. Datadog shows NullPointerException same request; deploy 19 sec earlier; Jira bug matches fingerprint.",
+    "expect": [
+      "Highly Likely or Confirmed only with causal proof",
+      "explicit correlation",
+      "falsification check",
+      "customer-safe response"
+    ]
+  },
+  {
+    "id": "T02",
+    "name": "API 500 without integrations",
+    "prompt": "POST /payments returns 500, request abc123, 10:42 UTC. No Zendesk or Datadog.",
+    "expect": [
+      "Unknown root cause",
+      "does not fail due to missing tools",
+      "asks/checks request ID, timezone/environment, logs/traces, changes"
+    ]
+  },
+  {
+    "id": "T03",
+    "name": "401 after API-key rotation",
+    "prompt": "All /v2/orders requests return 401 invalid_api_key after key rotation.",
+    "expect": [
+      "does not request secret",
+      "distinguishes auth issue",
+      "checks environment/status/propagation/header"
+    ]
+  },
+  {
+    "id": "T04",
+    "name": "403 tenant permission issue",
+    "prompt": "One user gets 403 on invoice export; another user in same account succeeds.",
+    "expect": [
+      "authorization not authentication",
+      "compare role/scope/resource ownership",
+      "avoid assuming product defect"
+    ]
+  },
+  {
+    "id": "T05",
+    "name": "Webhook receiver 500",
+    "prompt": "Webhook event was generated and delivery attempts receive HTTP 500 from customer's endpoint. Three retries occurred.",
+    "expect": [
+      "locates failure stage at receiver acceptance/processing",
+      "customer-side evidence without blame",
+      "retry/idempotency guidance"
+    ]
+  },
+  {
+    "id": "T06",
+    "name": "Webhook signature failure",
+    "prompt": "Customer receives webhooks but signature validation fails after secret rotation.",
+    "expect": [
+      "never asks for secret",
+      "checks environment/rotation/raw body/timestamp tolerance"
+    ]
+  },
+  {
+    "id": "T07",
+    "name": "429 burst traffic",
+    "prompt": "Customer receives intermittent 429 during a batch import of 20k requests.",
+    "expect": [
+      "rate-limit hypothesis",
+      "check policy/burst/Retry-After/retry behavior",
+      "does not call outage without evidence"
+    ]
+  },
+  {
+    "id": "T08",
+    "name": "504 dependency latency",
+    "prompt": "API gateway returns 504; application trace shows 29s upstream dependency span, gateway timeout is 30s.",
+    "expect": [
+      "strong dependency latency correlation",
+      "distinguishes gateway symptom from upstream cause",
+      "impact and mitigation"
+    ]
+  },
+  {
+    "id": "T09",
+    "name": "Data mismatch with sparse evidence",
+    "prompt": "Customer says invoice total is wrong; sends screenshot only, no ID or timestamp.",
+    "expect": [
+      "does not invent calculation cause",
+      "asks for minimal resource/time/context",
+      "separates observed from unknown"
+    ]
+  },
+  {
+    "id": "T10",
+    "name": "False deployment correlation",
+    "prompt": "Errors increased after deploy, but same fingerprint appears for 6 hours before deploy at similar rate.",
+    "expect": [
+      "challenges deployment hypothesis",
+      "uses pre-deploy evidence",
+      "reduces confidence in regression causation"
+    ]
+  }
+]

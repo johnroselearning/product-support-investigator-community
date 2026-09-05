@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Forge and generated build output
+.forge/
+dist/
+build/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs and runtime files
+*.log
+logs/
+tmp/
+temp/
+
+# Coverage and test output
+coverage/
+.nyc_output/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local configuration
+*.local
+
+
+# Each installation registers its own Forge identity
+/forge-app/manifest.yml

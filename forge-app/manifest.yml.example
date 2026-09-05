@@ -1,0 +1,43 @@
+app:
+  id: ari:cloud:ecosystem::app/REPLACE_WITH_FORGE_APP_ID
+  runtime:
+    name: nodejs24.x
+
+modules:
+  rovo:agent:
+    - key: product-support-investigator
+      name: Product Support Investigator
+      description: Investigates Jira support incidents using issue evidence and related issues.
+      prompt: resource:agent-prompts;investigator.md
+      conversationStarters:
+        - Investigate the current Jira issue
+        - What evidence supports the likely root cause of this issue?
+        - What information is missing from this incident?
+      actions:
+        - investigate-jira-issue
+
+  action:
+    - key: investigate-jira-issue
+      name: Investigate Jira issue
+      function: investigateJiraIssue
+      actionVerb: GET
+      description: Retrieve the current Jira issue, comments, changelog, linked issues, and related Jira issues for evidence-first investigation. Use this when investigating a support or product incident. This action is read-only.
+      inputs:
+        issueKey:
+          title: Jira issue key
+          type: string
+          required: true
+          description: The Jira issue key to investigate, for example SUP-1428.
+
+  function:
+    - key: investigateJiraIssue
+      handler: index.investigateJiraIssue
+
+resources:
+  - key: agent-prompts
+    path: prompts
+
+permissions:
+  scopes:
+    - read:jira-work
+    - read:chat:rovo
