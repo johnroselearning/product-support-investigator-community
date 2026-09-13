@@ -8,6 +8,8 @@ It can help investigate API failures, application errors, authentication problem
 
 See [`COMMUNITY.md`](COMMUNITY.md) for the Community Edition scope and feature boundary, [`CHANGELOG.md`](CHANGELOG.md) for release history, and [`LICENSE`](LICENSE) for licensing.
 
+For the Jira/Rovo distribution, see [`PRIVACY.md`](PRIVACY.md), [`DATA_HANDLING.md`](DATA_HANDLING.md), [`SECURITY.md`](SECURITY.md), [`TERMS.md`](TERMS.md), and the [`MARKETPLACE.md`](MARKETPLACE.md) submission guide.
+
 The root [`SKILL.md`](SKILL.md) is the canonical investigation methodology used by all platform adapters.
 
 For Codex and Claude installation commands, upload packaging, and public directory submission steps, see [Publish and install](docs/PUBLISHING.md).
@@ -440,6 +442,11 @@ product-support-investigator/
 ├── SKILL.md                              # canonical investigation methodology
 ├── COMMUNITY.md                          # Community Edition scope and boundary
 ├── CHANGELOG.md                          # release history
+├── PRIVACY.md                            # Jira/Rovo privacy policy
+├── DATA_HANDLING.md                      # current Forge data-flow disclosure
+├── SECURITY.md                           # security and vulnerability reporting
+├── TERMS.md                              # distributed app terms
+├── MARKETPLACE.md                        # Atlassian Marketplace submission guide
 ├── LICENSE                               # MIT license
 ├── skills/
 │   ├── product-support-investigator/     # portable skill entry point
@@ -505,6 +512,11 @@ Community is independently useful and requires no commercial service. Contributi
 - [`COMMUNITY.md`](COMMUNITY.md) — Community Edition scope and feature boundary
 - [`CHANGELOG.md`](CHANGELOG.md) — release history
 - [`SKILL.md`](SKILL.md) — canonical investigation methodology
+- [`PRIVACY.md`](PRIVACY.md) — Jira/Rovo privacy policy
+- [`DATA_HANDLING.md`](DATA_HANDLING.md) — Forge data handling and data flow
+- [`SECURITY.md`](SECURITY.md) — security policy
+- [`TERMS.md`](TERMS.md) — terms for the distributed app
+- [`MARKETPLACE.md`](MARKETPLACE.md) — Marketplace listing and review checklist
 - [`forge-app/README.md`](forge-app/README.md) — Forge/Rovo developer details
 - [`forge-app/PRIVATE_DISTRIBUTION.md`](forge-app/PRIVATE_DISTRIBUTION.md) — private customer distribution
 - [`docs/CONNECTORS.md`](docs/CONNECTORS.md) — optional connector model
