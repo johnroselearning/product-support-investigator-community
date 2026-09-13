@@ -10,6 +10,7 @@ output = ROOT / 'dist' / f'product-support-investigator-{version}.zip'
 files = [ROOT / name for name in (
     '.codex-plugin/plugin.json', '.claude-plugin/plugin.json',
     'SKILL.md', 'LICENSE', 'COMMUNITY.md', 'CHANGELOG.md',
+    'assets/icon.png', 'assets/logo.png',
 )]
 for directory in ('skills', 'references', 'examples'):
     files.extend(p for p in (ROOT / directory).rglob('*')

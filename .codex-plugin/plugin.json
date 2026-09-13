@@ -12,6 +12,8 @@
     "longDescription": "Investigate API failures, authentication issues, webhooks, integrations, performance problems, regressions, and technical escalations using available evidence.",
     "developerName": "Support Investigator contributors",
     "category": "Productivity",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png",
     "capabilities": ["Analyze", "Investigate"],
     "defaultPrompt": [
       "Investigate this technical support issue using available evidence.",
