@@ -10,6 +10,8 @@ See [`COMMUNITY.md`](COMMUNITY.md) for the Community Edition scope and feature b
 
 The root [`SKILL.md`](SKILL.md) is the canonical investigation methodology used by all platform adapters.
 
+For Codex and Claude installation commands, upload packaging, and public directory submission steps, see [Publish and install](docs/PUBLISHING.md).
+
 Advanced commercial capabilities may be offered separately. Community Edition remains independently useful.
 
 ## Choose how you want to use it
