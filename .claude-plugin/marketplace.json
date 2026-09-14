@@ -1,5 +1,6 @@
 {
   "name": "support-investigator",
+  "description": "Community plugins and skills for evidence-first technical support investigations.",
   "owner": {
     "name": "Support Investigator contributors"
   },

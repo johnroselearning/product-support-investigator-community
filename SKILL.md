@@ -21,6 +21,10 @@ The Community Edition is intentionally vendor-neutral. Datadog, Zendesk, Jira, G
 - Break complex problems into understandable stages or layers.
 - Use available read-only tools when useful; do not require a particular vendor.
 - Missing logs or integrations must not make the investigation unusable.
+- Insufficient evidence is not a stopping condition by itself. Use it to determine the next safe evidence-gathering action.
+- Keep the investigation moving by progressively narrowing where the failure occurs.
+- When evidence is missing, first determine whether it can be obtained through available read-only tools or through a concrete user-accessible check.
+- Prefer an executable diagnostic check over simply asking the user to provide information that the check can reveal.
 - Keep internal technical evidence separate from customer-safe communication.
 - Investigation is read-only by default. Production changes, deployment, rollback, issue mutation, or customer contact require explicit human authorization.
 
@@ -45,6 +49,12 @@ Do not assume the user's explanation of the issue is already the root cause. If 
 ## Layered Validation
 
 Break the workflow into useful stages. Use evidence already available to identify which stages appear healthy, failing, or still unknown.
+Use progressive decomposition: identify the earliest boundary where expected behavior changes to failure.
+
+For example:
+
+```text
+user action -> client -> network/request -> application -> dependency -> persistence -> response
 
 For a relevant stage, record when useful:
 
@@ -60,14 +70,23 @@ If a read-only tool can perform a check directly, use it rather than asking the 
 
 ## Evidence Sufficiency and Clarification
 
+## Evidence Sufficiency, Acquisition, and Clarification
+
 Begin with the evidence already available. Do not require complete information before useful investigation can start.
 
-Before asking the user for more information:
+When evidence is missing:
 
 1. inspect the supplied evidence;
-2. use available read-only sources when appropriate;
-3. determine whether the missing detail materially affects the investigation;
-4. ask only for the smallest useful clarification.
+2. identify the current failure surface and stage as far as possible;
+3. use available read-only tools, MCP servers, connectors, logs, telemetry, code, documentation, or other permitted sources when they can obtain the evidence directly;
+4. if tools cannot obtain it, determine whether the user can collect it through a small, safe, concrete diagnostic check;
+5. explain exactly what to capture from that check;
+6. explain how the possible result will narrow the investigation;
+7. ask a direct clarification only when the missing information cannot reasonably be obtained through the preceding steps.
+
+Insufficient evidence should trigger evidence acquisition, not terminate the investigation.
+
+Prefer the smallest discriminating piece of evidence rather than a broad diagnostic dump.
 
 High-value details can include environment, exact error, expected versus actual behavior, timestamp and timezone, request/correlation/transaction ID, affected account/resource, reproduction, frequency, last known success, and recent changes.
 
@@ -177,19 +196,23 @@ If impact is not established, mark severity as Unknown or Provisional.
 
 1. Identify the user's goal.
 2. Validate the reported symptom when possible.
-3. Locate the failure stage.
-4. Extract high-signal identifiers and context.
-5. Decide whether minimal clarification is required.
-6. Inspect the relevant stages/layers using existing evidence.
-7. Search available evidence narrow-to-broad using identifiers, time, error, endpoint, account/resource, version, and environment.
-8. Build a timeline when timing matters.
-9. Compare successful and failing paths.
-10. Correlate independent evidence.
-11. Review onset, recent changes, compatibility, and known issues when relevant.
-12. Generate and compare plausible hypotheses.
-13. Assess the deepest evidence-supported cause and confidence.
-14. Assess impact, scope, risk, workaround, and likely owner only when supported.
-15. Recommend safe support actions and prepare escalation/customer communication when useful.
+3. Identify the failure surface: web, mobile, API, CLI, desktop, backend/service, integration, or another relevant interface.
+4. Break the workflow into stages and locate the earliest known working-to-failing boundary.
+5. Locate the failure stage.
+6. Extract high-signal identifiers and context.
+7. Use available read-only tools, MCP servers, connectors, telemetry, logs, code, or documentation to gather relevant evidence.
+8. If required evidence cannot be retrieved directly, provide one or a small number of safe, concrete diagnostic checks appropriate to the user's surface and access level.
+9. Decide whether minimal clarification is required.
+10. Inspect the relevant stages/layers using existing evidence.
+11. Search available evidence narrow-to-broad using identifiers, time, error, endpoint, account/resource, version, and environment.
+12. Build a timeline when timing matters.
+13. Compare successful and failing paths.
+14. Correlate independent evidence.
+15. Review onset, recent changes, compatibility, and known issues when relevant.
+16. Generate and compare plausible hypotheses.
+17. Assess the deepest evidence-supported cause and confidence.
+18. Assess impact, scope, risk, workaround, and likely owner only when supported.
+19. Recommend safe support actions and prepare escalation/customer communication when useful.
 
 ## Customer Communication
 
