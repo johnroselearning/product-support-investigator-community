@@ -2,6 +2,10 @@
 
 Use for HTTP failures, unexpected API responses, timeouts, malformed responses, and API regressions.
 
+## 0. Identify the failure surface
+
+Determine where the HTTP error is observed before assuming backend access: web, mobile, API client, CLI, backend/service, or integration. Use relevant connected read-only sources first. Otherwise guide a small collection check appropriate to the user's surface and access; do not assume every user has browser or device diagnostics.
+
 ## 1. Capture request identity
 
 Extract:
@@ -38,7 +42,22 @@ Check duplicate/idempotent requests, state transition conflicts, concurrency, st
 Check per-key/account/IP limits, burst vs sustained rate, Retry-After, client retry behavior, and recent policy changes.
 
 ### 500
-Look for same-request application exception, code regression, unhandled edge case, DB/dependency failure, bad data/state, and feature flag/config changes.
+A verified 500 indicates a server-side request failure, but does not identify its origin or root cause. A reported 500 still needs confirmation through available evidence.
+
+First identify the failing request. With connected logs/traces, search its request/correlation ID, or correlate timestamp, endpoint, environment, and error fingerprint. Locate the earliest evidence-supported failing stage.
+
+Without direct telemetry, choose an accessible check:
+- **Web:** open Browser DevTools -> Network, reproduce once if safe, and select the request returning 500. Capture method, endpoint, response/error code, timestamp with timezone, and request/correlation ID if present.
+- **Mobile:** capture the failing action, app version, visible error, and timestamp. Distinguish an app crash from an HTTP response. If developer diagnostics are available, inspect the matching network response or scoped app/device logs.
+- **API client:** inspect the failed request's method, endpoint, status, response body, timestamp, and request ID.
+- **CLI:** capture the exact command and relevant error output; inspect verbose/debug HTTP output only if supported and safe.
+- **Backend/service:** inspect matching request logs or traces when the user has access.
+
+Do not repeat payments, writes, or other side-effecting actions just to reproduce an error without appropriate authorization. Never share tokens, cookies, signed URLs, or personal data.
+
+Explain the next branch: a request ID enables log correlation; otherwise use timestamp plus endpoint and environment. One failing endpoint narrows the search to its path; multiple unrelated failures justify checking shared boundaries without proving a shared cause. If no request returns 500, verify where the displayed error originated.
+
+Then investigate exceptions, regressions, edge cases, database/dependency failures, bad state, and configuration changes as evidence supports them. Avoid listing these as equally likely generic causes before they help distinguish checks.
 
 ### 502 / 503 / 504
 Check upstream health, gateway/proxy, dependency latency, service saturation, connection pools, DNS/network, scaling, and maintenance/deploy events.
@@ -92,9 +111,9 @@ Classify likely ownership:
 
 Do not assign blame without evidence.
 
-## 7. Minimum useful next evidence
+## 7. Minimum useful next evidence and how to obtain it
 
-If the case is under-specified, request only the highest-value fields:
+If the case is under-specified, obtain the smallest evidence that materially narrows the investigation. Useful fields include:
 1. request/correlation ID;
 2. timestamp + timezone;
 3. endpoint/action;
@@ -102,4 +121,4 @@ If the case is under-specified, request only the highest-value fields:
 5. exact response/error;
 6. affected resource/account.
 
-Then investigate before asking for more.
+Retrieve these from connected read-only sources when possible. Otherwise give a concrete check: where to look, what action to perform, what result to capture, what sensitive fields to redact, and how the result determines the next branch. Ask only essential remaining questions, then continue from the result before requesting broader information.

@@ -39,6 +39,23 @@ After each search, record:
 
 Avoid repeated searches that do not change the evidence state.
 
+## Progressive decomposition
+
+Divide the relevant workflow into stages, such as user action -> client -> request/network -> authentication -> application -> dependency/persistence -> response. Adapt this sequence to the system.
+
+Find the earliest evidence-supported boundary between working and failing behavior; an unknown stage is not proof of success. Investigate that boundary before expanding broadly.
+
+Choose checks by surface and access:
+- Web: inspect the relevant network request or console signal.
+- Mobile: distinguish a local app crash from transport failure or a backend error; start with the action, app version, visible error, and timestamp. Use device logs only when available and appropriate.
+- API: inspect the exact request and response.
+- CLI: inspect the command and error output; use scoped verbose output only when supported and safe.
+- Desktop: inspect the failing action and application diagnostics when available.
+- Backend: correlate request IDs or timestamps with logs/traces.
+- Integration/webhook: separate sender, transport, receiver, processing, and acknowledgement.
+
+These are starting points, not mandatory checks.
+
 ## Hypothesis discipline
 
 For every leading hypothesis list:
@@ -80,11 +97,15 @@ Do not call a temporal relationship causal without additional support.
 ## Sparse-evidence mode
 
 If only a symptom is known:
-- preserve the symptom verbatim;
-- identify the smallest useful next evidence request;
-- avoid demanding a full diagnostic dump;
-- prefer request ID + timestamp + endpoint/action + environment;
-- explain what each missing field would help distinguish.
+1. preserve the reported symptom without treating the user's explanation as a cause;
+2. identify the goal, observed surface, and relevant failure stage as far as evidence allows;
+3. inspect connected read-only evidence sources when useful before asking the user to retrieve the same information;
+4. otherwise choose the smallest safe, executable collection check suited to the user's access;
+5. explain where to look, what to do, what result to capture, and what outcomes would distinguish;
+6. ask essential context questions when needed; do not force a diagnostic action when a question is the better next move;
+7. continue from the result when it becomes available.
+
+Do not reduce this mode to missing fields or generic low-confidence hypotheses. Request IDs, timestamps, endpoint/action, and environment are useful; explain how to obtain them when practical. Avoid full diagnostic dumps and redact secrets and personal data.
 
 ## Conflict handling
 
@@ -101,6 +122,7 @@ Stop investigating when:
 - the next action requires a different owner/access level;
 - remaining searches are repetitive and non-discriminating;
 - the user requested a bounded analysis;
-- evidence is insufficient and the exact next evidence is known.
+- the next useful action requires access, authorization, or capability unavailable to both investigator and user;
+- no further safe discriminating check can be identified.
 
-Return the current evidence state rather than filling gaps with guesses.
+Return the current evidence state rather than filling gaps with guesses, and include the next executable evidence-gathering action whenever one exists. Waiting for a user's check result pauses execution, not the investigation; state the continuation branch and resume from the returned evidence.

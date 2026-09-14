@@ -55,6 +55,9 @@ For example:
 
 ```text
 user action -> client -> network/request -> application -> dependency -> persistence -> response
+```
+
+Adapt the stages to the system. If the failure surface is unknown, determine whether the symptom appears in a web app, mobile app, API client, CLI, desktop app, backend/service, or integration before choosing a deeper check.
 
 For a relevant stage, record when useful:
 
@@ -67,8 +70,6 @@ For a relevant stage, record when useful:
 Do not dump a long generic command list. Prefer a small number of relevant checks tied to the actual symptom and stage being investigated.
 
 If a read-only tool can perform a check directly, use it rather than asking the user to reproduce information unnecessarily.
-
-## Evidence Sufficiency and Clarification
 
 ## Evidence Sufficiency, Acquisition, and Clarification
 
@@ -158,7 +159,7 @@ Distinguish a supported workaround from a root-cause fix.
 
 ## Hypotheses
 
-When the cause is not directly established, generate a small set of plausible hypotheses.
+When the cause is not directly established, generate a small set of plausible hypotheses only when evidence can distinguish them or they help choose a diagnostic check. With minimal evidence, prioritize evidence acquisition over generic low-confidence causes.
 
 For each hypothesis include:
 
@@ -194,25 +195,21 @@ If impact is not established, mark severity as Unknown or Provisional.
 
 ## Investigation Workflow
 
-1. Identify the user's goal.
-2. Validate the reported symptom when possible.
-3. Identify the failure surface: web, mobile, API, CLI, desktop, backend/service, integration, or another relevant interface.
-4. Break the workflow into stages and locate the earliest known working-to-failing boundary.
-5. Locate the failure stage.
-6. Extract high-signal identifiers and context.
-7. Use available read-only tools, MCP servers, connectors, telemetry, logs, code, or documentation to gather relevant evidence.
-8. If required evidence cannot be retrieved directly, provide one or a small number of safe, concrete diagnostic checks appropriate to the user's surface and access level.
-9. Decide whether minimal clarification is required.
-10. Inspect the relevant stages/layers using existing evidence.
-11. Search available evidence narrow-to-broad using identifiers, time, error, endpoint, account/resource, version, and environment.
-12. Build a timeline when timing matters.
-13. Compare successful and failing paths.
-14. Correlate independent evidence.
-15. Review onset, recent changes, compatibility, and known issues when relevant.
-16. Generate and compare plausible hypotheses.
-17. Assess the deepest evidence-supported cause and confidence.
-18. Assess impact, scope, risk, workaround, and likely owner only when supported.
-19. Recommend safe support actions and prepare escalation/customer communication when useful.
+1. Identify the user's goal and expected outcome.
+2. Validate the symptom using supplied evidence or a safe validation check.
+3. Identify the failure surface and divide the relevant workflow into stages.
+4. Locate the earliest evidence-supported working-to-failing boundary; do not treat unknown stages as healthy.
+5. Extract available identifiers and context, then inspect connected read-only evidence sources.
+6. If evidence cannot be retrieved directly, give one or a small number of safe, executable checks appropriate to the user's interface and access.
+7. State where to look, what to do, what to capture, and how possible results determine the next branch. Ask essential context questions alongside the check when needed.
+8. Search narrow-to-broad using identifiers, time, error, endpoint, resource, version, and environment.
+9. Build a timeline, compare successful and failing paths when a suitable control exists, and correlate independent evidence.
+10. Review onset, recent changes, compatibility, and known issues when relevant.
+11. Generate hypotheses when they distinguish investigation paths, then assess the deepest supported cause and confidence.
+12. Assess impact, scope, risk, workaround, and likely owner only when supported.
+13. Continue narrowing from each new result. If awaiting a user check, state the next action and resume when the result arrives; do not invent results or retry indefinitely.
+14. Stop or hand off when the cause is sufficiently established, required access or authorization is unavailable, the user's bounded scope is complete, or no further safe discriminating check exists.
+15. Recommend safe support actions and prepare escalation/customer communication when useful.
 
 ## Customer Communication
 
@@ -245,6 +242,8 @@ Redact them when possible and never ask the user to paste secrets into the inves
 ## Output Contract
 
 Adapt output depth to the problem. Do not include empty sections only to satisfy a template.
+
+For sparse evidence, default to an interactive response: brief symptom assessment, essential context questions, one accessible next check, what to capture, and how its result narrows the next step. Keep evidence classification accurate without forcing a full ledger, severity discussion, or generic hypothesis list into the opening response. Use the fuller summary below when evidence exists or a report/escalation is requested.
 
 For Standard investigations, use relevant sections from:
 
@@ -283,10 +282,10 @@ Suggested commands must be read-only, scoped, safe, and must never request crede
 
 - Rich evidence → correlate available sources and validate deeply.
 - Partial evidence → establish what is known and identify gaps.
-- Minimal evidence → validate the symptom, map goal/failure stage, form basic hypotheses, and recommend relevant checks.
+- Minimal evidence → validate the symptom, identify the failure surface and stage, then give the smallest safe evidence-gathering check. Delay generic hypotheses until they help choose an investigation path.
 - No telemetry access → use symptoms, reproduction, supplied command results, code, configuration, documentation, versions, and user context without inventing evidence.
 
-If evidence cannot distinguish causes, say: **Insufficient evidence to determine the root cause.**
+If evidence cannot distinguish causes, say: **Insufficient evidence to determine the root cause.** Follow this with the next executable evidence-gathering action whenever one exists.
 
 ## Playbook Routing
 
@@ -306,4 +305,4 @@ Community provides a complete, vendor-neutral workflow for an individual support
 
 Before concluding, verify that the reported issue is validated or clearly marked unverified; Observed/Inferred/Unknown are separated; evidence was not invented; the goal and failure stage are clear; successful control paths and relevant recent changes were considered; hypotheses remain evidence-backed; severity matches demonstrated impact; customer-facing communication is safe; suggested actions are scoped and read-only by default; and unavailable integrations are treated as limitations rather than blockers.
 
-If the evidence is insufficient, say: **Insufficient evidence to determine the root cause.**
+If evidence is insufficient, state the limitation and provide the next useful collection action, or explain the specific access or capability blocking it.
