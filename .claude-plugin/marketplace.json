@@ -1,14 +1,25 @@
 {
   "name": "support-investigator",
-  "description": "Community plugins and skills for evidence-first technical support investigations.",
+  "description": "Community marketplace for evidence-first, vendor-neutral technical support investigation.",
   "owner": {
-    "name": "Support Investigator contributors"
+    "name": "Product Support Investigator Community",
+    "url": "https://github.com/johnroselearning/product-support-investigator-community"
   },
   "plugins": [
     {
       "name": "product-support-investigator",
       "source": "./",
-      "description": "Evidence-first technical support investigation"
+      "displayName": "Product Support Investigator",
+      "description": "Investigate technical customer and product issues using an evidence-first, vendor-neutral support workflow.",
+      "repository": "https://github.com/johnroselearning/product-support-investigator-community",
+      "license": "MIT",
+      "keywords": [
+        "technical-support",
+        "troubleshooting",
+        "investigation",
+        "incident-analysis",
+        "root-cause-analysis"
+      ]
     }
   ]
 }

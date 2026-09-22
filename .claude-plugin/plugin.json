@@ -1,8 +1,18 @@
 {
   "name": "product-support-investigator",
   "version": "0.1.0",
-  "description": "Evidence-first investigation of technical customer and product issues.",
+  "description": "Investigate technical customer and product issues using an evidence-first, vendor-neutral support workflow.",
   "author": {
-    "name": "Support Investigator contributors"
-  }
+    "name": "Product Support Investigator Community"
+  },
+  "homepage": "https://github.com/johnroselearning/product-support-investigator-community",
+  "repository": "https://github.com/johnroselearning/product-support-investigator-community",
+  "license": "MIT",
+  "keywords": [
+    "technical-support",
+    "troubleshooting",
+    "investigation",
+    "incident-analysis",
+    "root-cause-analysis"
+  ]
 }
