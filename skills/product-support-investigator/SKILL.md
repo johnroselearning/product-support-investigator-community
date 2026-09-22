@@ -1,6 +1,6 @@
 ---
 name: product-support-investigator
-description: Vendor-neutral evidence-first investigation of technical customer and product issues.
+description: Investigate technical customer and product issues using evidence-first troubleshooting. Use for application errors, HTTP and API failures, authentication issues, integrations, webhooks, performance problems, regressions, incidents, unexpected behavior, and technical escalations.
 ---
 
 # Product Support Investigator Community
