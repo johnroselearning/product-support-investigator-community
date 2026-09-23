@@ -2,29 +2,41 @@
 
 ## Codex and Claude distribution
 
-Repository: https://github.com/johnroselearning/product-support-investigator-community
+Repository: `johnroselearning/product-support-investigator-community`
 
-The plugin is named `product-support-investigator`; its repository marketplace is named `support-investigator`. Both platform manifests are already included. A GitHub install and a public directory listing are separate distribution routes. Validation does not establish that either directory has approved this plugin.
+The plugin is named `product-support-investigator`; its repository marketplace is named `support-investigator`. The repository contains the Claude marketplace and plugin manifests together with the canonical methodology and platform adapters.
 
-### Install from GitHub
+### Claude Code: install from the GitHub-hosted community marketplace
 
-In Claude Code, run:
+The supported community distribution path for this repository is its public GitHub-hosted Claude Code marketplace.
 
-```text
-/plugin marketplace add johnroselearning/product-support-investigator-community
-/plugin install product-support-investigator@support-investigator
-```
-
-For a Codex CLI that supports `codex plugin`, run:
+Add the marketplace:
 
 ```bash
-codex plugin marketplace add https://github.com/johnroselearning/product-support-investigator-community.git
-codex plugin install product-support-investigator@support-investigator
+claude plugin marketplace add johnroselearning/product-support-investigator-community
 ```
 
-Check `codex plugin --help` first. The installed Snap CLI checked during preparation did not support these subcommands. Use a current compatible Codex installation or the app's plugin import flow. Start a new task after installation and ask it to use Product Support Investigator with one of the bundled examples.
+Install Product Support Investigator:
 
-The marketplace installs the whole plugin. Do not distribute just the thin `skills/product-support-investigator/SKILL.md` entry point: it depends on the root methodology and supporting files.
+```bash
+claude plugin install product-support-investigator@support-investigator
+```
+
+During v0.1.0 release preparation, the marketplace was successfully discovered as `support-investigator`, the plugin was recognized as `product-support-investigator@support-investigator`, and the package passed:
+
+```bash
+claude plugin validate . --strict
+```
+
+These checks validate the manifest/distribution path. They do **not** establish runtime investigation quality. Runtime behavior has not yet been independently tested with an active Claude subscription.
+
+The marketplace installs the whole repository-root plugin. Do not distribute only the thin `skills/product-support-investigator/SKILL.md` entry point because it depends on the canonical root methodology and supporting files.
+
+For current marketplace hosting and distribution rules, use Anthropic's Claude Code plugin marketplace documentation.
+
+### Codex / ChatGPT
+
+The repository also contains Codex-oriented packaging and a portable skill entry point. Codex/ChatGPT installation varies by supported product surface and workspace configuration. Prefer the current product UI or supported plugin/skill installation flow rather than documenting unverified CLI commands.
 
 ### Build an upload archive
 
@@ -32,26 +44,13 @@ From the repository root:
 
 ```bash
 python3 scripts/validate_skill.py
-claude plugin validate .claude-plugin/plugin.json
-claude plugin validate .
+claude plugin validate . --strict
 python3 scripts/package_plugin.py
 ```
 
-The archive is written to `dist/product-support-investigator-0.1.0.zip` (the filename follows the Codex manifest version). It includes both plugin manifests, both skills, the canonical methodology, references, examples, license, and Community scope. Forge deployment files and local settings are excluded. Test the archive's skills in a clean session before submitting; manifest validation alone does not test investigation quality.
+The archive is written to `dist/product-support-investigator-0.1.0.zip` (the filename follows the plugin version). It includes the plugin manifests, skills, canonical methodology, references, examples, license, and Community scope. Forge deployment files and local settings are excluded.
 
-### Submit to OpenAI's public directory
-
-Open the [plugin submission portal](https://platform.openai.com/plugins), create a **Skills only** submission, and upload the archive. Complete the listing and testing fields, resolve scan findings, and submit for review. Publication requires the portal's approval process.
-
-Publisher-owned materials still needed: verified developer identity, logo, website/support/privacy/terms URLs, country availability, and policy attestations. Prepare five positive and three negative test cases with expected outcomes. Existing examples and `tests/cases.json` provide source material; do not describe unevaluated cases as passing.
-
-Sources: [OpenAI submission requirements](https://developers.openai.com/plugins/deploy/submission) and [Claude plugin archive import](https://developers.openai.com/plugins/guides/submit-claude-plugin).
-
-### Submit to Claude's public community marketplace
-
-Use the [Claude Console submission form](https://platform.claude.com/plugins/submit) with this repository and the plugin at its root. Team/Enterprise administrators can also use the [organization submission form](https://claude.ai/admin-settings/directory/submissions/plugins/new). Complete the form's publisher details and submit for review.
-
-Approved third-party submissions go to `claude-community`. Anthropic's `claude-plugins-official` catalog is separately curated; the form does not guarantee placement there. See [Claude's submission documentation](https://code.claude.com/docs/en/plugins#submit-your-plugin-to-the-community-marketplace).
+Manifest validation does not test investigation quality. Test the packaged skill in a clean supported runtime before making runtime-quality claims.
 
 ### Suggested listing copy
 

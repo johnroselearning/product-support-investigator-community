@@ -12,7 +12,20 @@ For the Jira/Rovo distribution, see [`PRIVACY.md`](PRIVACY.md), [`DATA_HANDLING.
 
 The root [`SKILL.md`](SKILL.md) is the canonical investigation methodology used by all platform adapters.
 
-For Codex and Claude installation commands, upload packaging, and public directory submission steps, see [Publish and install](docs/PUBLISHING.md).
+For Codex and Claude installation commands, packaging, and distribution guidance, see [Publish and install](docs/PUBLISHING.md).
+
+## Install in Claude Code
+
+Product Support Investigator is distributed through the public GitHub-hosted `support-investigator` community marketplace.
+
+Add the marketplace and install the plugin:
+
+```bash
+claude plugin marketplace add johnroselearning/product-support-investigator-community
+claude plugin install product-support-investigator@support-investigator
+```
+
+The marketplace manifest has passed `claude plugin validate . --strict`, GitHub marketplace discovery has been verified, and the plugin installation path has been verified. Runtime investigation behavior has not yet been independently tested with an active Claude subscription.
 
 Advanced commercial capabilities may be offered separately. Community Edition remains independently useful.
 
