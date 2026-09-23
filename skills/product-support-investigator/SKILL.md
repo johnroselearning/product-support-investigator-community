@@ -57,3 +57,5 @@ Adapt output depth to complexity and requested mode. Do not include empty sectio
 28. Confidence
 
 Use evidence IDs (`E1`, `E2`) and correlation IDs (`C1`, `C2`). State unavailable connectors and limitations. If the evidence cannot distinguish causes, say: **Insufficient evidence to determine the root cause.**
+
+For optional telemetry, follow the repository root `references/evidence-providers.md` contract. Discover tools exposed by the host, inspect their read-only capabilities, and query only to answer a specific investigation question. For Grafana, load `references/grafana.md`; an existing read-only MCP tool or the optional `scripts/grafana_evidence.py` CLI can acquire evidence. No integration is required. Never put credentials in tool arguments or model context.

@@ -71,3 +71,7 @@ The app does not currently maintain a developer-controlled persistent store of J
 ## Future integrations
 
 If a future version adds Datadog, Zendesk, GitHub, an MCP service, RAG/vector storage, analytics, a remote backend, or another external integration, this document and the Privacy Policy must be reviewed before release. New scopes, data flows, subprocessors, retention behavior, and external egress must be disclosed accurately.
+
+## Optional local Grafana adapter (separate from Forge)
+
+The opt-in Python adapter sends scoped read-only queries to a runtime-configured Grafana endpoint using a runtime bearer token. It returns bounded, best-effort redacted telemetry on stdout and does not persist responses. Logs and labels can still contain customer PII or unidentified secrets; review before sharing. Host tools may retain output under their own policies. This adapter does not change Forge storage or egress. See [Grafana setup](docs/GRAFANA.md).

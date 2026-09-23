@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add an optional read-only Grafana evidence provider for discovery, Loki logs, and Prometheus metrics, with a vendor-neutral evidence contract, bounded/redacted output, offline tests, and shared Codex/Claude/Rovo guidance.
+- Preserve the existing Forge Jira action; Grafana backend integration remains a documented extension boundary.
+
 All notable changes to Product Support Investigator Community will be documented in this file.
 
 The project uses semantic versioning for published releases.

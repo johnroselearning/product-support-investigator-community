@@ -39,3 +39,7 @@ Thumbs.db
 
 # Each installation registers its own Forge identity
 /forge-app/manifest.yml
+
+# Python runtime caches
+__pycache__/
+*.pyc

@@ -1,5 +1,7 @@
 # Connectors
 
-Connectors are optional evidence providers. Current adapters include Jira/Rovo and the repository's Forge starter; Zendesk and Datadog remain optional. The workflow also supports future providers such as Grafana, Splunk, Elastic, CloudWatch, Azure Monitor, New Relic, Dynatrace, Sentry, GitHub, GitLab, PagerDuty, ServiceNow, Slack, Microsoft Teams, OpenTelemetry, Prometheus, Kubernetes, AWS, Azure, and GCP.
+Connectors are optional evidence providers, separate from investigation reasoning. The [versioned evidence contract](../references/evidence-providers.md) extends the existing E1/E2 ledger without changing Jira evidenceVersion 2. It applies to Codex, Claude, and future secure Forge telemetry actions.
 
-Each connector should return source identifiers, timestamps, observed content, reliability, truncation/availability limits, and read-only behavior where possible. Adding a connector must not change the investigation method or report contract.
+Available: Jira/Rovo via the existing Forge action; optional [Grafana HTTP adapter](GRAFANA.md) for bounded health/discovery, Loki logs, and Prometheus metrics. Grafana is not wired into Forge. Existing read-only MCP tools may supply the same contract after trusted normalization.
+
+Future providers can implement the same contract for Datadog, Sentry, GitHub, CloudWatch, Azure Monitor, Kubernetes, OpenTelemetry, Elasticsearch, or Splunk without changing the investigation workflow. No source is required. Provider errors remain access limitations, never application evidence.

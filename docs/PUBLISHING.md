@@ -37,7 +37,7 @@ claude plugin validate .
 python3 scripts/package_plugin.py
 ```
 
-The archive is written to `dist/product-support-investigator-0.1.0.zip` (the filename follows the Codex manifest version). It includes both plugin manifests, both skills, the canonical methodology, references, examples, license, and Community scope. Forge deployment files and local settings are excluded. Test the archive's skills in a clean session before submitting; manifest validation alone does not test investigation quality.
+The archive is written to `dist/product-support-investigator-0.1.0.zip` (the filename follows the Codex manifest version). It includes both plugin manifests, both skills, the canonical methodology, references, examples, license, Community scope, and optional Grafana Python provider/CLI. Forge deployment files and local settings are excluded. Test the archive's skills in a clean session before submitting; manifest validation alone does not test investigation quality.
 
 ### Submit to OpenAI's public directory
 

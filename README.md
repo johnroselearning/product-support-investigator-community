@@ -526,3 +526,7 @@ Community is independently useful and requires no commercial service. Contributi
 - [`docs/PUBLISHING.md`](docs/PUBLISHING.md) — publishing guidance
 
 Forge and Rovo change over time, so check Atlassian's current Forge documentation when deploying or changing permissions.
+
+## Optional Grafana evidence
+
+A read-only local provider supports discovery, Loki logs, and Prometheus metrics. Existing read-only MCP tools can use the same evidence contract. See [setup, platform boundaries, and tests](docs/GRAFANA.md). Grafana is optional and is not enabled in the Forge app.

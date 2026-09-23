@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a skills-only upload archive from an explicit public-file allowlist."""
+"""Build a skill upload archive with optional helpers from a public-file allowlist."""
 import json
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -11,10 +11,11 @@ files = [ROOT / name for name in (
     '.codex-plugin/plugin.json', '.claude-plugin/plugin.json',
     'SKILL.md', 'LICENSE', 'COMMUNITY.md', 'CHANGELOG.md',
     'assets/icon.png', 'assets/logo.png',
+    'scripts/grafana_evidence.py',
 )]
-for directory in ('skills', 'references', 'examples'):
+for directory in ('skills', 'references', 'examples', 'providers'):
     files.extend(p for p in (ROOT / directory).rglob('*')
-                 if p.is_file() and p.suffix in ('.md', '.yaml'))
+                 if p.is_file() and p.suffix in ('.md', '.yaml', '.py'))
 output.parent.mkdir(exist_ok=True)
 with ZipFile(output, 'w', ZIP_DEFLATED) as archive:
     for path in sorted(files):
@@ -24,4 +25,4 @@ with ZipFile(output, 'w', ZIP_DEFLATED) as archive:
 with ZipFile(output) as archive:
     assert archive.testzip() is None
 print(output)
-print(f'{len(files)} files; skills, methodology, references, and examples included')
+print(f'{len(files)} files; skills, methodology, references, examples, and optional provider included')

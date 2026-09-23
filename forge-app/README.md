@@ -182,3 +182,7 @@ Forge and Rovo schemas evolve, so verify the current Atlassian documentation whe
 - Rovo agent module: https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-agent/
 - Rovo action module: https://developer.atlassian.com/platform/forge/manifest-reference/modules/rovo-action/
 - Jira scopes: https://developer.atlassian.com/platform/forge/manifest-reference/scopes-product-jira/
+
+## Grafana provider boundary
+
+The optional repository Grafana adapter is a separate local Python runtime; it is not called by this Forge app. The shared [provider contract](../references/evidence-providers.md) defines a future authorized backend/action boundary. No Grafana egress, secrets, or manifest permissions are added. The self-contained Rovo prompt preserves the shared telemetry trust and failure-handling rules.
