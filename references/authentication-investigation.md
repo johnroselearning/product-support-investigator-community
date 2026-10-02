@@ -4,7 +4,7 @@ Use for login, API-key, OAuth, token, SSO, session, permission, 401, and 403 iss
 
 ## Distinguish first
 
-Authentication = who are you?  
+Authentication = who are you?\
 Authorization = are you allowed to do this?
 
 Do not treat 401 and 403 as interchangeable.
@@ -63,6 +63,6 @@ Do not expose one user's permissions or account data to another customer.
 
 ## Root cause caution
 
-A 401 after a deployment may still be caused by client token expiry.  
-A 403 may be expected product behavior.  
+A 401 after a deployment may still be caused by client token expiry.\
+A 403 may be expected product behavior.\
 Establish intended policy before calling it a defect.

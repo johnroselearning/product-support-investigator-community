@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Build a skill upload archive with optional helpers from a public-file allowlist."""
 import json
+import subprocess
+import sys
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
+subprocess.run([sys.executable, str(ROOT / 'scripts/sync_skill.py'), '--check'], check=True)
 version = json.loads((ROOT / '.codex-plugin/plugin.json').read_text())['version']
 output = ROOT / 'dist' / f'product-support-investigator-{version}.zip'
 files = [ROOT / name for name in (

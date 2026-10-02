@@ -61,8 +61,8 @@ Never request the actual secret. Ask for metadata or verification result.
 
 ## Ordering and duplicates
 
-Determine whether ordering is guaranteed by contract.  
-For duplicates, check idempotency handling and retry reason.  
+Determine whether ordering is guaranteed by contract.\
+For duplicates, check idempotency handling and retry reason.\
 Do not label documented at-least-once delivery as a platform defect.
 
 ## Customer-safe output

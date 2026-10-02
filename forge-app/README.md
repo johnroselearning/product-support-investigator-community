@@ -186,3 +186,6 @@ Forge and Rovo schemas evolve, so verify the current Atlassian documentation whe
 ## Grafana provider boundary
 
 The optional repository Grafana adapter is a separate local Python runtime; it is not called by this Forge app. The shared [provider contract](../references/evidence-providers.md) defines a future authorized backend/action boundary. No Grafana egress, secrets, or manifest permissions are added. The self-contained Rovo prompt preserves the shared telemetry trust and failure-handling rules.
+
+
+The deployed `prompts/investigator.md` is generated, including supporting Markdown so it needs no repository-root file at runtime. Edit the root skill/references or `../atlassian/compliance-gate.txt` / `../atlassian/rovo-adapter.txt`, then run `python3 ../scripts/sync_skill.py` from this directory before Forge validation or deployment. `python3 ../scripts/sync_skill.py --check` checks drift. The MCP adapter is a separate local Python process and adds no Forge action, scope, or egress.

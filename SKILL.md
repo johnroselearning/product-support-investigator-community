@@ -1,6 +1,6 @@
 ---
 name: product-support-investigator
-description: Investigate technical customer and product issues with an evidence-first, vendor-neutral support workflow.
+description: Investigate technical customer and product issues using evidence-first troubleshooting. Use for application errors, HTTP and API failures, authentication issues, integrations, webhooks, performance problems, regressions, incidents, unexpected behavior, and technical escalations.
 ---
 
 # Product Support Investigator — Community Edition
@@ -175,7 +175,7 @@ For each hypothesis include:
 - confidence: High, Medium, or Low;
 - a useful next validation step when needed.
 
-Consider alternatives before concluding. A matching historical incident, GitHub issue, recent deployment, or similar error can generate a hypothesis but does not prove the current cause.
+Re-rank hypotheses when new or contradictory evidence appears; do not preserve the first leading hypothesis by default. Consider alternatives before concluding. A matching historical incident, GitHub issue, recent deployment, or similar error can generate a hypothesis but does not prove the current cause.
 
 Do not use false numerical precision when the evidence does not justify it.
 
@@ -243,7 +243,7 @@ A useful escalation includes:
 
 Treat pre-signed URLs, SAS tokens, signed query strings, temporary access URLs, tokens, cookies, and credentials as sensitive.
 
-Redact them when possible and never ask the user to paste secrets into the investigation.
+Do not expose or probe sensitive temporary URLs with arbitrary HTTP methods. Redact them when possible and never ask the user to paste secrets into the investigation.
 
 ## Output Contract
 

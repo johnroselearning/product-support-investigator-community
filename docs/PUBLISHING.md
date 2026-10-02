@@ -31,6 +31,7 @@ The marketplace installs the whole plugin. Do not distribute just the thin `skil
 From the repository root:
 
 ```bash
+python3 scripts/sync_skill.py
 python3 scripts/validate_skill.py
 claude plugin validate .claude-plugin/plugin.json
 claude plugin validate .
@@ -70,3 +71,12 @@ Publish the reviewed source into a new repository whose default branch is `main`
 For a source-only release, copy the reviewed files without `.git`, dependencies, credentials, or generated output, then initialize a new repository. Review and approve the final content before publishing. No publication is implied by validation.
 
 For Forge/Rovo, copy `manifest.yml.example` to the ignored `manifest.yml`, register your own app identity, install dependencies, and run Forge lint. Review scopes and module schema against current official Atlassian documentation before explicitly deploying and installing. This repository does not claim deployment or installation.
+
+
+## Canonical source and generated adapters
+
+Edit the root `SKILL.md` and root `references/`, `COMMUNITY.md`, or optional helper sources. Run `python3 scripts/sync_skill.py` after changes. Commit its generated files with the source changes; do not edit `skills/product-support-investigator/` or `forge-app/prompts/investigator.md` directly. The plugin directory is a self-contained generated bundle, including every path in `skill_adapter/bundle.py`. Its `SKILL.md` is byte-identical to the root source.
+
+The output-format documentation is also generated from the canonical report headings. The Rovo prompt is generated from `atlassian/compliance-gate.txt` (the preserved compliance gate), `atlassian/rovo-adapter.txt` (Jira-specific rules), the canonical methodology, and supporting Markdown. The gate remains first and takes precedence. Python helpers are not Forge actions. The repository Codex/Claude wrappers delegate methodology to the root skill; portable plugin installations use the generated directory.
+
+Validation and upload packaging reject stale generated instructions. CI also checks drift. Adding a supporting reference requires updating the explicit bundle list and regenerating adapters. See [MCP serving and client compatibility](MCP_SKILLS.md).
