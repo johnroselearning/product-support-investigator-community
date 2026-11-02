@@ -66,10 +66,10 @@ For every leading hypothesis list:
 
 Example:
 
-Hypothesis: deployment regression  
-Support: failures begin 90 seconds after release; matching stack trace references changed code.  
-Against: one similar failure occurred before release.  
-Missing: comparison across versions.  
+Hypothesis: deployment regression\
+Support: failures begin 90 seconds after release; matching stack trace references changed code.\
+Against: one similar failure occurred before release.\
+Missing: comparison across versions.\
 Falsification: if old-version instances fail at the same rate, deployment causation weakens.
 
 ## Confidence rubric

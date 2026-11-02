@@ -14,6 +14,8 @@ The root [`SKILL.md`](SKILL.md) is the canonical investigation methodology used 
 
 For Codex and Claude installation commands, upload packaging, and public directory submission steps, see [Publish and install](docs/PUBLISHING.md).
 
+For local MCP discovery and retrieval, see [the skill adapter guide](docs/MCP_SKILLS.md). The adapter serves instructions and included supporting files over stdio using native Skills extension methods plus fallback tools. It performs no investigations.
+
 Advanced commercial capabilities may be offered separately. Community Edition remains independently useful.
 
 ## Choose how you want to use it

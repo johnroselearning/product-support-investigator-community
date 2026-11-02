@@ -1,0 +1,3 @@
+# Official SDK extension API and current protocol support, verified with 2.2.0.
+mcp==2.2.0
+PyYAML==6.0.3

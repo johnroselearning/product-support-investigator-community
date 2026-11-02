@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import re, sys, json
+import re, sys, json, subprocess
 
 root = Path(__file__).resolve().parents[1]
 skill = root / "SKILL.md"
@@ -15,6 +15,8 @@ required = [
 ]
 
 errors = []
+if subprocess.run([sys.executable, str(root / "scripts/sync_skill.py"), "--check"]).returncode:
+    errors.append("Generated plugin or Forge instructions are stale")
 if not skill.exists():
     errors.append("SKILL.md missing")
 else:

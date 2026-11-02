@@ -43,3 +43,6 @@ Thumbs.db
 # Python runtime caches
 __pycache__/
 *.pyc
+
+# Local MCP adapter environment
+/.venv-mcp/
