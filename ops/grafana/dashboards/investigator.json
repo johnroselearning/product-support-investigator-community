@@ -1,0 +1,16 @@
+{
+  "title": "Product Support Investigator",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {"type":"stat","title":"Total investigations","gridPos":{"h":4,"w":6,"x":0,"y":0},"targets":[{"expr":"sum(count_over_time({service=\"product-support-investigator\"} |= \"investigation_completed\" [$__range]))"}]},
+    {"type":"stat","title":"Failed investigations","gridPos":{"h":4,"w":6,"x":6,"y":0},"targets":[{"expr":"sum(count_over_time({service=\"product-support-investigator\"} |= \"investigation_failed\" [$__range]))"}]},
+    {"type":"timeseries","title":"Tool calls by tool","gridPos":{"h":8,"w":12,"x":0,"y":4},"targets":[{"expr":"sum by (tool) (count_over_time({service=\"product-support-investigator\"} |= \"tool_call_completed\" [$__interval]))"}]},
+    {"type":"timeseries","title":"Tool call failures","gridPos":{"h":8,"w":12,"x":12,"y":4},"targets":[{"expr":"sum by (tool) (count_over_time({service=\"product-support-investigator\"} |= \"tool_call_failed\" [$__interval]))"}]},
+    {"type":"timeseries","title":"Average tool-call duration","gridPos":{"h":8,"w":12,"x":0,"y":12},"targets":[{"expr":"avg_over_time({service=\"product-support-investigator\"} | json | component=\"tool_executor\" | unwrap duration_ms [$__interval])"}]},
+    {"type":"timeseries","title":"Investigations by status","gridPos":{"h":8,"w":12,"x":12,"y":12},"targets":[{"expr":"sum by (status) (count_over_time({service=\"product-support-investigator\"} | json | operation=~\"investigation_.*\" [$__interval]))"}]},
+    {"type":"logs","title":"Recent errors","gridPos":{"h":8,"w":12,"x":0,"y":20},"targets":[{"expr":"{service=\"product-support-investigator\"} | json | level=\"ERROR\""}]},
+    {"type":"logs","title":"Investigation timeline by correlation_id","gridPos":{"h":8,"w":12,"x":12,"y":20},"targets":[{"expr":"{service=\"product-support-investigator\"} | json | correlation_id != \"\""}]}
+  ]
+}

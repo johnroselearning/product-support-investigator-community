@@ -1,0 +1,10 @@
+apiVersion: 1
+providers:
+  - name: Product Support Investigator
+    orgId: 1
+    folder: Product Support Investigator
+    type: file
+    disableDeletion: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

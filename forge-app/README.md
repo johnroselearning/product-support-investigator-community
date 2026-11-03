@@ -20,6 +20,9 @@ Rovo / Jira user
 Product Support Investigator (Rovo Agent)
       |
       v
+Product Support Investigation (Rovo Skill)
+      |
+      v
 investigate-jira-issue (Rovo Action)
       |
       v
@@ -33,6 +36,31 @@ Datadog / Zendesk / GitHub / Grafana / other systems
 ```
 
 The root `SKILL.md` remains the source methodology. Platform adapters should preserve its evidence model, hypothesis testing, confidence rules, read-only default, and tool-independent fallback.
+
+## Agent, Skill, and Action
+
+This project keeps the three responsibilities separate:
+
+```text
+Product Support Investigator Agent
+        |
+        | uses
+        v
+Product Support Investigation Skill
+        |
+        | uses
+        v
+investigate-jira-issue Action
+        |
+        v
+Jira evidence
+```
+
+- **Agent** = the investigator identity and high-level Rovo behavior. It lives in `manifest.yml` and uses `prompts/investigator.md`.
+- **Skill** = the reusable evidence-first investigation methodology. It lives in `skills/product-support-investigation/SKILL.md` and defines the workflow, hypothesis discipline, and `Observed` / `Inferred` / `Unknown` output.
+- **Action** = executable Jira evidence retrieval. It is declared in `manifest.yml` and implemented by `src/index.js` using the current user's Jira permissions.
+
+The agent selects the skill for investigation requests; the skill may use the existing read-only action. The skill does not contain Jira REST API code, and the action does not decide the root cause.
 
 ## 1. Register this existing Forge app
 

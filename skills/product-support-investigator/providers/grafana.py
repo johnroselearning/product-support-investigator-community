@@ -8,9 +8,25 @@ from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 from .evidence import MAX_OBSERVATIONS, envelope, finalize
+try:
+    from observability.audit import audit_event
+    from observability.context import ensure_investigation_context
+    from observability.logging import get_logger
+    from observability.tool_calls import logged_tool_call
+except ImportError:  # Keep the portable skill provider usable outside this repository.
+    import logging
+    def audit_event(*args, **kwargs):
+        return None
+    def ensure_investigation_context(function):
+        return function
+    def get_logger(name):
+        return logging.getLogger(name)
+    def logged_tool_call(tool, operation=None):
+        return lambda function: function
 
 MAX_BYTES = 1_048_576
 MAX_WINDOW_SECONDS = 3600
+log = get_logger("grafana")
 
 
 class ProviderError(Exception):
@@ -29,6 +45,7 @@ class GrafanaProvider:
         self._token = token if token is not None else os.environ.get('GRAFANA_TOKEN', '')
         self._opener = build_opener(NoRedirect())
 
+    @logged_tool_call("grafana_mcp", "query")
     def _get(self, path, params=None):
         # Only internal callers supply a fixed path; redirects cannot leak credentials.
         req = Request(self.url.rstrip('/') + path + ('?' + urlencode(params) if params else ''),
@@ -101,10 +118,13 @@ class GrafanaProvider:
             if (end - start).total_seconds() / step > 1000:
                 raise ProviderError('invalid_request')
 
+    @ensure_investigation_context
     def retrieve(self, request):
         if not isinstance(request, dict):
             request = {}
         result = envelope('grafana', request)
+        operation = request.get('operation')
+        audit_event("external_tool_called", operation=operation or "retrieve", tool="grafana_mcp", status="started")
         try:
             self._validate(request)
             if not self.url or not self._token:
@@ -128,7 +148,9 @@ class GrafanaProvider:
             result['observations'] = []
             result['retrieval_status'] = 'invalid_response'
             result['limitations'].append('Invalid request or provider response; not application evidence.')
-        return finalize(result, (self._token,))
+        final = finalize(result, (self._token,))
+        audit_event("evidence_retrieved", operation=operation or "retrieve", tool="grafana_mcp", status=final.get('retrieval_status', 'unknown'), result_count=len(final.get('observations', [])))
+        return final
 
     def _discover(self, request, result):
         if request['operation'] == 'health':

@@ -1,0 +1,51 @@
+services:
+  product-support-investigator:
+    build: .
+    environment:
+      PSI_LOG_LEVEL: INFO
+      PSI_LOG_FORMAT: json
+      PSI_LOG_DESTINATION: stdout
+      PSI_ENVIRONMENT: local
+      PSI_REDACT_SENSITIVE_DATA: "true"
+      PSI_ENABLE_AUDIT_LOG: "true"
+      PSI_LOG_RAW_EVIDENCE: "false"
+    depends_on:
+      - loki
+    logging:
+      driver: json-file
+
+  loki:
+    image: grafana/loki:3.2.1
+    command: -config.file=/etc/loki/config.yml
+    volumes:
+      - ./ops/loki/config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+
+  promtail:
+    image: grafana/promtail:3.2.1
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./ops/promtail/config.yml:/etc/promtail/config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana:11.3.1
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./ops/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./ops/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - loki
+
+volumes:
+  grafana-data:
+  loki-data:

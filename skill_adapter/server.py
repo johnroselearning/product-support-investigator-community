@@ -1,6 +1,7 @@
 """Read-only stdio MCP server. Run: python -m skill_adapter.server."""
 from copy import deepcopy
 from hashlib import sha256
+import sys
 from typing import Any
 
 import yaml
@@ -10,10 +11,14 @@ from mcp.server.mcpserver.resources import TextResource
 from mcp.shared.exceptions import MCPError
 from mcp_types import RequestParams, ToolAnnotations
 
+from observability.audit import audit_event
+from observability.logging import configure_logging, get_logger
+
 from .bundle import BASE_URI, SKILL_URI, read_bundle
 
 EXTENSION_ID = "io.modelcontextprotocol/skills"
 VERSIONS = frozenset({"2026-07-28"})
+log = get_logger("mcp_server")
 
 
 class ListParams(RequestParams):
@@ -38,12 +43,14 @@ class Skills(Extension):
         )
 
     async def list(self, ctx, params):
+        log.info("skill discovery requested", extra={"component": "mcp_server", "operation": "skills_list", "status": "success"})
         if params.cursor is not None:
             raise MCPError(-32602, "Invalid cursor")
         return {"resultType": "complete", "skills": [deepcopy(self.entry)],
                 "ttlMs": 0, "cacheScope": "public"}
 
     async def get(self, ctx, params):
+        log.info("skill retrieval requested", extra={"component": "mcp_server", "operation": "skills_get", "status": "success"})
         if params.uri != SKILL_URI:
             raise MCPError(-32602, "Unknown skill URI")
         return {"resultType": "complete", "skill": deepcopy(self.entry),
@@ -105,6 +112,9 @@ def create_server() -> MCPServer:
 
 
 def main():
+    # stdout is reserved for MCP JSON-RPC frames when using stdio transport.
+    configure_logging(stream=sys.stderr)
+    audit_event("configuration_changed", operation="server_started", status="success")
     create_server().run(transport="stdio")
 
 
