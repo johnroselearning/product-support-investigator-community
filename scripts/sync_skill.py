@@ -41,6 +41,9 @@ def outputs():
     files[ROOT / "forge-app/src/trace-contract.json"] = (json.dumps({
         "schema_version": "1.0", "skill_version": "sha256:" + sha256(bundle["SKILL.md"]).hexdigest(),
         "checks": CHECKLIST,
+        "skill_bytes": len((ROOT / "forge-app/skills/product-support-investigation/SKILL.md").read_bytes()),
+        "instructions_bytes": len(prompt),
+        "prompt_hash": "sha256:" + sha256(prompt).hexdigest(),
     }, indent=2) + "\n").encode()
     return files
 

@@ -1,4 +1,5 @@
-import api, { route } from '@forge/api';
+import api, { route, getAppContext } from '@forge/api';
+import { randomUUID } from 'node:crypto';
 import { traceAction, traceJiraCall } from './trace.js';
 
 const MAX_COMMENTS = 100;
@@ -39,8 +40,8 @@ function assertIssueKey(issueKey) {
   }
 }
 
-async function requestJson(path) {
-  return traceJiraCall(() => requestJsonUntraced(path));
+async function requestJson(path, metadata) {
+  return traceJiraCall(() => requestJsonUntraced(path), metadata);
 }
 
 async function requestJsonUntraced(path) {
@@ -91,7 +92,24 @@ function compactIssue(issue) {
 }
 
 export async function investigateJiraIssue(payload) {
-  return traceAction(() => investigate(payload));
+  const support_reference = `PSI-${randomUUID()}`;
+  let appContext = {};
+  try { appContext = getAppContext(); } catch { /* Context is unavailable outside Forge. */ }
+  const issueKey = getIssueKey(payload);
+  const continuity = payload?.support_reference
+    ? 'Previous reference could not be verified; this is a new investigation.'
+    : 'This is a new investigation.';
+  try {
+    const result = await traceAction(() => investigate(payload), {
+      issueKeyValid: !!issueKey && /^[A-Za-z][A-Za-z0-9_]+-\d+$/.test(issueKey),
+      investigation_id: support_reference,
+      invocation_id: appContext.invocationId || null,
+      environment: appContext.environmentType || 'unknown',
+    });
+    return { ...result, support_reference, continuity };
+  } catch {
+    return { support_reference, continuity, error: { code: 'INVESTIGATION_FAILED', message: 'The investigation could not be completed.' } };
+  }
 }
 
 async function investigate(payload) {
@@ -100,14 +118,17 @@ async function investigate(payload) {
 
   const issue = await requestJson(
     route`/rest/api/3/issue/${issueKey}?fields=${ISSUE_FIELDS}`,
+    { operation: 'get_issue', issueKey, fields: ISSUE_FIELDS.split(',') },
   );
 
   const [comments, changelog] = await Promise.all([
     requestJson(
       route`/rest/api/3/issue/${issueKey}/comment?startAt=0&maxResults=${MAX_COMMENTS}`,
+      { operation: 'get_comments', issueKey },
     ),
     requestJson(
       route`/rest/api/3/issue/${issueKey}/changelog?startAt=0&maxResults=${MAX_CHANGELOG_ENTRIES}`,
+      { operation: 'get_changelog', issueKey },
     ),
   ]);
 
@@ -136,6 +157,7 @@ async function investigate(payload) {
 
     const result = await requestJson(
       route`/rest/api/3/search/jql?jql=${jql}&maxResults=${MAX_RECENT_PROJECT_ISSUES}&fields=summary,status,priority,updated,issuetype`,
+      { operation: 'search_project_issues', issueKey, fields: ['summary', 'status', 'priority', 'updated', 'issuetype'], optional: true },
     ).catch((error) => ({
       unavailable: true,
       reason: error.message,

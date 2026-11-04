@@ -12,5 +12,8 @@
     "avoid_unsupported_claims": "validate_final_response",
     "record_confidence": "calculate_confidence",
     "disclose_missing_evidence": "validate_final_response"
-  }
+  },
+  "skill_bytes": 5979,
+  "instructions_bytes": 52076,
+  "prompt_hash": "sha256:9726a985163719381de280a7639e53b48c27260f813acbb8e7a6380a36e5ca25"
 }

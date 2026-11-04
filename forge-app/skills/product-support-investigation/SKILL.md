@@ -66,3 +66,13 @@ State the best-supported current hypothesis and its confidence. Say **Unknown** 
 Recommend the smallest useful action to reduce uncertainty.
 
 Do not force every heading when a concise answer is clearer. Keep internal technical evidence separate from customer-safe communication and do not expose secrets or unnecessary personal data.
+
+
+## Support reference
+
+When an action returns support_reference, copy its exact value into every successful or handled-failure response, followed by this sentence:
+
+Support reference: <exact returned support_reference>
+If you encounter a problem, share this reference with support.
+
+Never generate, guess, or modify a reference. For a follow-up, pass the previously returned support_reference when available. Tell the user when the action says a new investigation was started. Do not call a support reference a native Rovo conversation ID.
