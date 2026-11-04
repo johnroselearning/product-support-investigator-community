@@ -14,6 +14,7 @@ from .policy import failure_reason, prepare, readiness, timestamp
 from .reports import finalize_report, needs_critic
 from .semantic import ConservativeCritic
 from .state import Limits, State, safe, utcnow
+from .service_map import ServiceMap
 
 ROOT = Path(__file__).resolve().parents[1]
 ROUTING = json.loads((Path(__file__).with_name("routing.json")).read_text())
@@ -24,14 +25,19 @@ class BudgetExhausted(Exception):
 
 
 class Harness:
-    def __init__(self, adapter, registry, policy, *, limits=None, critic=None, secrets=(), clock=time.monotonic):
+    def __init__(self, adapter, registry, policy, *, limits=None, critic=None, secrets=(), clock=time.monotonic, service_map=None):
         self.adapter, self.registry, self.policy = adapter, registry, policy
         self.limits, self.critic = limits or Limits(), critic or ConservativeCritic()
         self.secrets, self.clock = tuple(secrets), clock
+        self.service_map = service_map or ServiceMap()
 
-    async def run(self, request):
+    async def run(self, request, *, parent_investigation_id=None):
         # A new runner is used per run. Configuration and policy never enter mutable state.
-        self.state = State()
+        if parent_investigation_id is not None:
+            validate(parent_investigation_id, string(64))
+            if not parent_investigation_id.isalnum():
+                raise ValueError("Invalid parent investigation ID")
+        self.state = State(parent_investigation_id=parent_investigation_id)
         self.started = self.clock()
         self.seen = set()
         self.references = None
@@ -98,7 +104,9 @@ class Harness:
             state.termination = "execution_failure"
             self.partial("A component failed; its private exception content was not retained.")
         state.elapsed_seconds = round(max(0, self.clock() - self.started), 6)
-        state.event("termination", reason=state.termination, count=state.calls)
+        state.event("termination", reason=state.termination, count=state.calls,
+                    duration_ms=round(state.elapsed_seconds * 1000), model_calls=state.model_calls,
+                    cost_units=state.cost, reserved_tokens=state.reserved_tokens)
         return state
 
     def remaining(self):
@@ -147,7 +155,8 @@ class Harness:
         state = self.state
         while state.termination is None:
             choice = await self.model("choose", {"state": state.view(), "capabilities": self.registry.catalog(),
-                                                "method": self.references},
+                                                "method": self.references,
+                                                "service_leads": self.service_map.leads(state.scope.get("service"))},
                                       obj({"kind": string(values=("action", "report", "clarify")),
                                            "capability": string(80), "question": string(300),
                                            "hypotheses": REPORT["properties"]["hypotheses"]},
@@ -252,9 +261,11 @@ class Harness:
             checks = readiness({"capability": name}, inputs, state, self.registry, self.policy, limits, self.remaining())
             if failure_reason(checks):
                 raise BudgetExhausted()
+            call_started = self.clock()
             state.calls += 1
             state.cost += binding.cost_units
             state.event("call", status="started", count=state.calls, capability=name, tool=binding.tool, provider=binding.provider)
+            transient_timeout = False
             try:
                 result = await asyncio.wait_for(binding.handler(deepcopy(inputs), min(self.remaining(), limits.call_seconds)),
                                                 timeout=min(self.remaining(), limits.call_seconds))
@@ -286,14 +297,18 @@ class Harness:
                     result["status"] = "empty"
             except BudgetExhausted:
                 raise
-            except Exception:
+            except Exception as error:
+                transient_timeout = isinstance(error, TimeoutError)
                 result = {"status": "execution_failure", "records": [], "resolved": {}, "next_cursor": "",
                           "limitations": ["Provider failure or invalid result; not application evidence."]}
             state.actions.append({"capability": name, "tool": binding.tool, "provider": binding.provider,
                                   "inputs": safe(inputs), "status": result["status"],
                                   "next_cursor": result["next_cursor"], "attempt": attempt + 1})
-            state.event("call", status=result["status"], count=state.calls)
-            if result["status"] == "execution_failure" and attempt < limits.retries:
+            state.event("call", status=result["status"], count=state.calls, capability=name,
+                        tool=binding.tool, provider=binding.provider, retry_count=attempt,
+                        duration_ms=round(max(0, self.clock() - call_started) * 1000),
+                        result_count=len(result["records"]))
+            if transient_timeout and attempt < limits.retries:
                 continue
             before = len(state.evidence)
             for record in result["records"]:
@@ -304,7 +319,8 @@ class Harness:
                 match = next((e for e in state.evidence[before:] if e["scope"].get(key) == value), None)
                 if match:
                     state.scope.add(key, value, "retrieved", match["id"])
-            state.event("evidence_update", count=len(state.evidence) - before, status=result["status"])
+            state.event("evidence_update", count=len(state.evidence) - before, status=result["status"],
+                        evidence_refs=[e["id"] for e in state.evidence[before:]])
             state.questions.extend(safe(result["limitations"], self.secrets))
             if result["records"] and len(state.evidence) == before:
                 state.termination = "no_progress"

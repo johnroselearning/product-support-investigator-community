@@ -54,6 +54,7 @@ Components:
 | `reports.py` | Evidence references, quote support, conservative strong-claim rejection, mandatory coverage gaps |
 | `state.py` | Compact state, run IDs, versions, usage, redaction, content-free event summaries |
 | `fixtures.py` | Explicit simulated semantic decisions and synthetic providers |
+| `service_map.py` | Optional bounded, operator-supplied service leads; never grants access |
 | `grafana.py` | Optional constrained bridge to the existing real HTTP provider |
 | `evaluate.py` | Independent grading across eight dimensions; never passes expected answers to adapters |
 
@@ -94,6 +95,23 @@ python3 -m investigation_harness.evaluate --adapter my_host_adapter:create --spl
 
 This explicit option permits the configured model destination and may incur its provider charges. The factory receives no case IDs, expected decisions, split labels, or grader feedback. Keep credentials in its runtime configuration and independently review actual model results. No real-model evaluation has been run for this delivery.
 
+## Optional service mappings
+
+Construct a `ServiceMap` in trusted host code and pass it as `Harness(..., service_map=...)`. For example:
+
+```python
+from investigation_harness.service_map import ServiceMap
+service_map = ServiceMap([{
+    "service": "checkout", "aliases": ["cart"], "routes": ["/pay"],
+    "components": ["api"], "environments": ["production"],
+    "datasources": ["approved-loki-uid"],
+    "telemetry_labels": {"service": "checkout"},
+    "dependencies": ["payments"], "owners": ["checkout-team"],
+}])
+```
+
+A known service, alias, route, or component in the established service scope matches exact entries; at most ten entries are presented to the model as leads. An unknown scope never enumerates the catalog. Mapping entries neither fill trusted scope nor authorize calls, prove causation, or replace discovery. Scope must still be established independently and pass host policy. Configurations are copied and bounded to 100 entries; keep credentials out of them.
+
 ## Optional live Grafana binding
 
 Live execution is opt-in host code. The demo never turns live when it finds environment variables. The repository's existing `GrafanaProvider` is the only supported real provider bridge. GitHub and Jira examples remain fixtures; native Forge/Jira access is unchanged and not invoked by this Python harness.
@@ -124,13 +142,13 @@ policy = Policy(
 )
 ```
 
-Replace sample values only from trusted operator configuration. The actual datasource must enforce the configured tenant/environment/service labels and least-privilege service-account access. Grafana is not assumed to store application logs: an approved Loki UID is required for logs, and Prometheus for metrics. The existing provider verifies datasource type before querying. The bridge supports exact fixed metric names plus mandatory scope selectors; no arbitrary PromQL, URLs, queries, or cursors. Returned labels are checked again. The existing provider reads at most 100 observations / 1 MiB on the wire; this bridge applies tighter model-visible limits and marks incomplete coverage. No live service discovery is exposed.
+Replace sample values only from trusted operator configuration. The actual datasource must enforce the configured tenant/environment/service labels and least-privilege service-account access. Grafana is not assumed to store application logs: an approved Loki UID is required for logs, and Prometheus for metrics. The existing provider verifies datasource type before querying. The bridge supports exact fixed metric names plus mandatory scope selectors; no arbitrary PromQL, URLs, queries, or cursors. Returned labels are checked again. The bridge records sanitized provider failure categories in limitations; timeout and transport failure are combined by the underlying provider as unavailable. Zero matches remain inconclusive. The existing provider reads at most 100 observations / 1 MiB on the wire; this bridge applies tighter model-visible limits and marks incomplete coverage. No live service discovery is exposed.
 
 Each live call runs the existing synchronous provider in a child process with only its required environment, fixed GET paths, redirect rejection, and bounded output. Harness cancellation kills and reaps the child. Tokens stay outside prompts and events. Pass additional known sensitive values in `Harness(..., secrets=(... ,))` for explicit redaction if needed. Enforce network egress and endpoint/DNS trust at the host as well. The bridge has only mocked verification here; no production credentials or live calls were used.
 
 ## Budgets, critic, and reporting
 
-`Limits` bounds tool calls, per-action retries, elapsed time, per-call timeout, model calls, model token reservations, output size, evidence records, results, query windows, operator-defined cost units, and critic revisions. Identical executed calls are suppressed. Pagination accepts only a cursor returned for the same capability/query. Repeated evidence is deduplicated without dropping new contradiction annotations; a full ledger stops with a partial report instead of silently evicting evidence.
+`Limits` bounds tool calls, per-action retries, elapsed time, per-call timeout, model calls, model token reservations, output size, evidence records, results, query windows, operator-defined cost units, and critic revisions. Identical executed calls are suppressed; only a timed-out attempt is eligible for a bounded retry. Other failures are not presumed transient. Pagination accepts only a cursor returned for the same capability/query. Repeated evidence is deduplicated without dropping new contradiction annotations; a full ledger stops with a partial report instead of silently evicting evidence.
 
 Model adapters must honor cancellation and output limits. The harness bounds returned JSON to four bytes per requested output token and conservatively reserves UTF-8 input bytes plus that entire output byte cap as token-equivalent units. This is a labeled estimate, **not measured token usage or savings**. Provider input/output counts are retained separately when available; absent counts remain null. Cost units are configurable operator units, not monetary billing guarantees. Network adapters and host model clients are trusted code: cooperative cancellation alone cannot contain an arbitrary blocking callback or an adapter that secretly makes extra calls.
 
@@ -138,7 +156,7 @@ Conflicts, significant gaps, consequential claims, and strong causal/attribution
 
 Deterministic report checks validate references and exact observed excerpts, reject unverified strong causal/blame/deployment/absence claims, and preserve empty/partial/stale/conflicting coverage gaps. Investigation summary prose is rendered conservatively so a free-text summary cannot bypass claim checks. V1 deliberately keeps root cause **Unknown**: it does not have a machine-verifiable causal-proof contract. Inference and hypothesis entailment still require semantic/human review; citations alone are not proof. These reports are internal investigation artifacts, not automatically approved customer communications.
 
-Default events contain run ID, component version, timestamps, route/skill, readiness enums, actual tool binding identifiers, counts, critic finding counts, and termination. They contain no prompts, retrieved excerpts, arguments, or private chain-of-thought. Events are held in memory; only `--events` prints them. Reports contain bounded, redacted excerpts. The existing tracing system is neither replaced nor represented as enforcing this harness; the existing Grafana provider may still emit its existing local tracing metadata.
+Default events contain run ID, optional host-supplied parent investigation ID, component version, timestamps, route/skill, readiness enums, actual tool binding identifiers, call duration, result and retry counts, evidence IDs, budget usage, critic finding counts, and termination. They contain no prompts, retrieved excerpts, arguments, or private chain-of-thought. Events are held in memory; only `--events` prints them. Reports contain bounded, redacted excerpts. The existing tracing system is neither replaced nor represented as enforcing this harness; the existing Grafana provider may still emit its existing local tracing metadata.
 
 ## Platform and security boundaries
 
@@ -151,3 +169,5 @@ Default events contain run ID, component version, timestamps, route/skill, readi
 No mutation or outbound data-sharing capability is supported. Tool descriptions, issues, logs, code comments, and model/critic responses cannot authorize access. Permission scope and allowed destinations come only from trusted host construction. Prompt injection can still distort a model's interpretation or suggested text; executable boundaries limit its actions but do not make reasoning immune. Redaction is best effort and may miss unusual secrets, personal data, and sensitive source locators. The system is neither breach-proof nor demonstrated unbiased. Fixture neutrality, informal-language, causal-suggestion, and team-blame cases are regression checks, not a fairness study.
 
 See [the evaluation record](HARNESS_EVALUATION.md) for the exact verification scope and remaining gaps.
+
+Future hosts can supply a parent investigation ID to `run` and persist the returned events through their own telemetry pipeline. Alert triggers and reviewed improvement proposals remain host extension points; no scheduler, autonomous publishing, or improvement workflow is implemented.

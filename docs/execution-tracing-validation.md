@@ -1,6 +1,6 @@
 # Execution tracing implementation validation
 
-Implementation is locally tested; authenticated Grafana verification remains pending.
+Implementation and authenticated Grafana verification are complete.
 
 ## Architecture and schema
 
@@ -32,8 +32,9 @@ message or raw evidence.
 - `git diff --check`: passed.
 - Default Docker stack: application, Loki and Promtail running with final code.
 - Live Loki query for `{service="product-support-investigator"} | json |
-  event_type="skill_decision_completed"`: success, one stream and one event at
-  initial validation. This is an actual startup trace whose skill decision is skipped.
+  event_type="skill_decision_completed"`: verified successfully in Grafana Explore.
+  The result displayed one matching log line with `applied=false`, `trace_id`,
+  `correlation_id`, and `investigation_id`.
 - Existing `grafana-local` detected on HTTPS port 3000 and connected to the Compose
   network. Bundled Grafana is now opt-in; the stopped duplicate container from the
   first startup attempt was removed. Existing Grafana data was not replaced.
@@ -47,9 +48,10 @@ message or raw evidence.
 - Initial Grafana startup hit an occupied port; reused existing Grafana instead.
 - Existing collector discovered unrelated containers and produced old-log rejection
   errors. Added a keep filter selecting only the PSI application service.
-- Existing Grafana serves HTTPS with a local certificate and rejects admin/admin
-  with HTTP 401. The in-app browser rejects the certificate. Authenticated datasource
-  configuration and Grafana query verification await user sign-in; **not verified**.
+- Existing Grafana serves HTTPS with a local certificate and rejects the default
+  development login. After the user’s authenticated session was available, the
+  existing `loki` datasource was configured with `http://loki:3100`; **Save & test
+  succeeded**, and the LogQL query was verified in Explore.
 - Real Jira/Rovo deployment and a credentialed live Grafana evidence retrieval were
   not performed. Forge tests cover the trace boundary locally. No mutation scopes
   or production writes were introduced.

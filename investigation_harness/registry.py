@@ -58,7 +58,8 @@ class Registry:
         # Schemas and skill content are loaded only after a need is selected.
         return [{"capability": c.name, "evidence": c.evidence, "coverage": c.coverage,
                  "preconditions": list(c.required_context), "alternatives": list(c.alternatives),
-                 "bound": c.name in self.bindings} for c in self.capabilities.values()]
+                 "bound": c.name in self.bindings,
+                 "available": bool(c.name in self.bindings and self.bindings[c.name].available())} for c in self.capabilities.values()]
 
     def contract(self, capability):
         binding = self.bindings.get(capability)
