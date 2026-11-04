@@ -11,7 +11,7 @@ from .engine import Harness
 from .fixtures import fixture_registry, policy, scenario
 from .state import utcnow
 
-DATA = Path(__file__).resolve().parents[1] / "tests/harness/cases.v1.json"
+DATA = Path(__file__).resolve().parents[1] / "investigation_harness/evaluation_cases.v1.json"
 
 
 def grade(state, expected):

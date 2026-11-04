@@ -124,7 +124,7 @@ class RuntimeSecurityTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(state.termination, "budget_exhausted")
             self.assertEqual(state.calls, 0)
         state = await self.run_case("failure", limits=Limits(retries=1))
-        self.assertEqual(state.calls, 2)
+        self.assertEqual(state.calls, 1)  # Unclassified failures are not retried.
         self.assertNotIn("must-not-log", json.dumps(state.export()))
         registry = fixture_registry("checkout")
         cancelled = []

@@ -82,6 +82,14 @@ class GrafanaBridgeTests(unittest.IsolatedAsyncioTestCase):
                 await self.registry().bindings["query_metrics"].handler(
                     {**FULL_SCOPE, "datasource": datasource, "metric": metric, "limit": 10}, 1)
 
+    async def test_empty_and_access_failures_remain_distinguishable(self):
+        for status in ("empty", "permission_denied", "query_error", "unavailable"):
+            response = {"retrieval_status": status, "observations": [], "limitations": []}
+            with patch("investigation_harness.grafana.asyncio.create_subprocess_exec", new=AsyncMock(return_value=Process(response))):
+                result = await self.registry().bindings["search_logs"].handler({**FULL_SCOPE, "limit": 20}, 1)
+            self.assertEqual(result["status"], "empty" if status == "empty" else "unavailable")
+            self.assertIn("Grafana retrieval status: " + status, result["limitations"][0])
+
     async def test_cross_scope_result_and_process_cancellation(self):
         response = self.response()
         response["observations"][0]["labels"]["tenant_id"] = "globex"

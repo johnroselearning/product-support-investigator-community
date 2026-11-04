@@ -93,6 +93,7 @@ class Scope:
 @dataclass
 class State:
     run_id: str = field(default_factory=lambda: uuid4().hex)
+    parent_investigation_id: str | None = None
     understanding: dict = field(default_factory=dict)
     selected_skill: str | None = None
     scope: Scope = field(default_factory=Scope)
@@ -115,10 +116,12 @@ class State:
 
     def event(self, phase, **fields):
         # Callers may emit only fixed enums, booleans, counts, and internal IDs.
-        allowed = {"status", "route", "skill", "count", "checks", "reason", "simulated", "capability", "tool", "provider"}
+        allowed = {"status", "route", "skill", "count", "checks", "reason", "simulated", "capability", "tool", "provider", "duration_ms", "result_count", "retry_count",
+                   "evidence_refs", "model_calls", "cost_units", "reserved_tokens"}
         if fields.keys() - allowed:
             raise ValueError("Unsafe event field")
-        self.events.append({"run_id": self.run_id, "version": VERSION, "phase": phase,
+        self.events.append({"run_id": self.run_id, "parent_investigation_id": self.parent_investigation_id,
+                            "version": VERSION, "phase": phase,
                             "timestamp": utcnow(), **safe(fields)})
 
     def view(self):

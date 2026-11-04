@@ -95,7 +95,7 @@ def bind_grafana(registry, *, url, token, datasources, metrics=(), label_names=N
                     "truncat" in s.lower() or "bound" in s.lower() or "warning" in s.lower() for s in result["limitations"])):
                 normalized = "partial"
             return {"status": normalized, "records": rows, "resolved": {}, "next_cursor": "",
-                    "limitations": ["Bounded Grafana query; ingestion, source coverage and causal relevance are unverified."]}
+                    "limitations": ["Grafana retrieval status: " + (status if status in {"success", "empty", "authentication_failed", "permission_denied", "query_error", "invalid_request", "invalid_response", "rate_limited", "unavailable", "not_configured", "response_too_large"} else "other_failure") + "; ingestion, source coverage and causal relevance are unverified."]}
 
         schema = input_contract(name)
         # The existing adapter does not support cursors; no invented pagination.
