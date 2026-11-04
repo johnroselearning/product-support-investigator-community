@@ -12,6 +12,8 @@ For the Jira/Rovo distribution, see [`PRIVACY.md`](PRIVACY.md), [`DATA_HANDLING.
 
 The root [`SKILL.md`](SKILL.md) is the canonical investigation methodology used by all platform adapters.
 
+For the optional Python request-understanding and investigation runtime, see [the local harness guide](docs/INVESTIGATION_HARNESS.md) and [verification report](docs/HARNESS_EVALUATION.md). Run `python3 -m investigation_harness --all` for a clearly labeled, credential-free simulated demo. The harness includes execution policy, scoped evidence acquisition, a conditional critic, and offline evaluations; it does not intercept native Codex, Claude, or Rovo calls.
+
 For Codex and Claude installation commands, upload packaging, and public directory submission steps, see [Publish and install](docs/PUBLISHING.md).
 
 For local MCP discovery and retrieval, see [the skill adapter guide](docs/MCP_SKILLS.md). The adapter serves instructions and included supporting files over stdio using native Skills extension methods plus fallback tools. It performs no investigations.
@@ -532,3 +534,22 @@ Forge and Rovo change over time, so check Atlassian's current Forge documentatio
 ## Optional Grafana evidence
 
 A read-only local provider supports discovery, Loki logs, and Prometheus metrics. Existing read-only MCP tools can use the same evidence contract. See [setup, platform boundaries, and tests](docs/GRAFANA.md). Grafana is optional and is not enabled in the Forge app.
+
+### Execution traces
+
+Application-controlled skill decisions, phases, tools and compliance are inspectable;
+unobserved host reasoning is never marked completed. See [execution tracing](docs/execution-tracing.md)
+for the schema, privacy boundary, adapter limitations and synthetic examples.
+
+```sh
+docker compose up -d --build             # existing Loki, collector and Grafana stack
+python3 -m observability.trace list
+python3 -m observability.trace inspect TRACE_ID
+python3 -m observability.trace.examples --output /tmp/psi-example-traces
+.venv-mcp/bin/python -m unittest discover -s tests
+node --test forge-app/src/trace.test.mjs
+```
+
+Reuse your existing Grafana and provision the Loki datasource as described in the guide.
+If none exists, run `docker compose --profile standalone-grafana up -d` and open [local Grafana](http://localhost:3000).
+Container traces: `docker compose exec product-support-investigator python -m observability.trace list`.

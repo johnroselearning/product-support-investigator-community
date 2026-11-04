@@ -46,3 +46,6 @@ __pycache__/
 
 # Local MCP adapter environment
 /.venv-mcp/
+
+# Local execution records
+.psi-traces/

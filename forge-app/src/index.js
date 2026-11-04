@@ -1,4 +1,5 @@
 import api, { route } from '@forge/api';
+import { traceAction, traceJiraCall } from './trace.js';
 
 const MAX_COMMENTS = 100;
 const MAX_CHANGELOG_ENTRIES = 100;
@@ -39,6 +40,10 @@ function assertIssueKey(issueKey) {
 }
 
 async function requestJson(path) {
+  return traceJiraCall(() => requestJsonUntraced(path));
+}
+
+async function requestJsonUntraced(path) {
   const response = await api.asUser().requestJira(path, {
     headers: { Accept: 'application/json' },
   });
@@ -86,6 +91,10 @@ function compactIssue(issue) {
 }
 
 export async function investigateJiraIssue(payload) {
+  return traceAction(() => investigate(payload));
+}
+
+async function investigate(payload) {
   const issueKey = getIssueKey(payload);
   assertIssueKey(issueKey);
 

@@ -1,5 +1,7 @@
 # Evaluation Guide
 
+The executable harness has a separate [versioned offline dataset](harness/cases.v1.json), [evaluation record](../docs/HARNESS_EVALUATION.md), and [run instructions](../docs/INVESTIGATION_HARNESS.md). Its fixture pass counts measure deterministic runtime behavior, not real-model classification quality. The original behavioral cases below remain separate.
+
 Use `cases.json` as manual or automated prompts.
 
 Score each case 0/1 on each criterion:

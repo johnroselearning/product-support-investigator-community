@@ -1,0 +1,295 @@
+{
+  "schema_version": "1.0",
+  "trace_id": "trace-9172b24fc34846818dfa8fcc3d7e1309",
+  "correlation_id": "corr-dbdf93759aa348d796de7e78fcb076ff",
+  "investigation_id": "inv-7b84923e501d4bb9aee9139d0d234c51",
+  "timestamp": "2026-11-03T19:26:30.921689+00:00",
+  "request_type": "incident_investigation",
+  "request_summary_safe": "incident_investigation",
+  "skill_id": "product-support-investigator",
+  "skill_version": "sha256:e6566615ca9667b82d63a78e7e80fdb7ece9642093c39a68a66866b63a3b7df5",
+  "skill_applied": true,
+  "skill_decision_reason": "Evidence-based support investigation requested",
+  "decision_confidence": null,
+  "phases": [
+    {
+      "phase_id": "classify_request",
+      "status": "passed",
+      "started_at": "2026-11-03T19:26:30.925271+00:00",
+      "completed_at": "2026-11-03T19:26:30.925284+00:00",
+      "safe_summary": "Classified by adapter request boundary",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "decide_skill_usage",
+      "status": "passed",
+      "started_at": "2026-11-03T19:26:30.927310+00:00",
+      "completed_at": "2026-11-03T19:26:30.927319+00:00",
+      "safe_summary": "Evidence-based support investigation requested",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "collect_issue_context",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "identify_service",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "identify_time_window",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "select_tools",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "retrieve_evidence",
+      "status": "failed",
+      "started_at": "2026-11-03T19:26:30.931760+00:00",
+      "completed_at": "2026-11-03T19:26:30.948215+00:00",
+      "safe_summary": "Execution failed",
+      "evidence_references": [],
+      "error": "TimeoutError"
+    },
+    {
+      "phase_id": "classify_evidence",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "test_hypotheses",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "produce_findings",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "calculate_confidence",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "validate_final_response",
+      "status": "not_run",
+      "started_at": null,
+      "completed_at": null,
+      "safe_summary": "",
+      "evidence_references": [],
+      "error": null
+    }
+  ],
+  "instruction_checks": [
+    {
+      "id": "classify_request",
+      "status": "passed",
+      "evidence": "Recorded execution satisfies check"
+    },
+    {
+      "id": "decide_skill_usage",
+      "status": "passed",
+      "evidence": "Recorded execution satisfies check"
+    },
+    {
+      "id": "collect_issue_context",
+      "status": "failed",
+      "evidence": "Required completion evidence missing"
+    },
+    {
+      "id": "select_tools_conditionally",
+      "status": "failed",
+      "evidence": "Required completion evidence missing"
+    },
+    {
+      "id": "use_read_only_default",
+      "status": "passed",
+      "evidence": "Recorded execution satisfies check"
+    },
+    {
+      "id": "separate_observed_inferred_unknown",
+      "status": "failed",
+      "evidence": "Required completion evidence missing"
+    },
+    {
+      "id": "test_hypotheses",
+      "status": "failed",
+      "evidence": "Required completion evidence missing"
+    },
+    {
+      "id": "avoid_unsupported_claims",
+      "status": "failed",
+      "evidence": "Required completion evidence missing"
+    },
+    {
+      "id": "record_confidence",
+      "status": "failed",
+      "evidence": "Required completion evidence missing"
+    },
+    {
+      "id": "disclose_missing_evidence",
+      "status": "failed",
+      "evidence": "Required completion evidence missing"
+    }
+  ],
+  "tools_considered": [
+    {
+      "tool": "grafana_mcp",
+      "reason": "Synthetic service and incident window available"
+    }
+  ],
+  "tools_called": [
+    {
+      "tool": "grafana_mcp",
+      "operation": "query",
+      "server": "grafana_mcp",
+      "status": "failed",
+      "safe_argument_summary": "Arguments omitted",
+      "reason": "Synthetic service and incident window available",
+      "correlation_id": "corr-dbdf93759aa348d796de7e78fcb076ff",
+      "investigation_id": "inv-7b84923e501d4bb9aee9139d0d234c51",
+      "error_type": "TimeoutError",
+      "error_code": null,
+      "duration_ms": 7.97
+    }
+  ],
+  "tools_skipped": [],
+  "evidence_summary": [],
+  "hypotheses": [],
+  "read_only_mode": true,
+  "writes_attempted": 0,
+  "writes_completed": 0,
+  "writes_blocked": 0,
+  "write_reason": null,
+  "user_authorization_present": false,
+  "final_status": "failed",
+  "final_confidence": null,
+  "errors": [
+    {
+      "tool": "grafana_mcp",
+      "error_type": "TimeoutError",
+      "error_code": null
+    },
+    {
+      "error_type": "TimeoutError"
+    }
+  ],
+  "duration_ms": 28.45,
+  "events": [
+    {
+      "timestamp": "2026-11-03T19:26:30.922481+00:00",
+      "event_type": "skill_decision_started"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.925315+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "classify_request",
+      "status": "passed"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.927335+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "decide_skill_usage",
+      "status": "passed"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.929248+00:00",
+      "event_type": "skill_decision_completed",
+      "skill_id": "product-support-investigator",
+      "applied": true,
+      "request_type": "incident_investigation",
+      "reason": "Evidence-based support investigation requested",
+      "confidence": null
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.931772+00:00",
+      "event_type": "phase_started",
+      "phase_id": "retrieve_evidence"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.935543+00:00",
+      "event_type": "tool_considered",
+      "tool": "grafana_mcp",
+      "reason": "Synthetic service and incident window available"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.939399+00:00",
+      "event_type": "tool_call_started",
+      "tool": "grafana_mcp",
+      "operation": "query",
+      "server": "grafana_mcp",
+      "status": "started",
+      "safe_argument_summary": "Arguments omitted",
+      "reason": "Synthetic service and incident window available",
+      "correlation_id": "corr-dbdf93759aa348d796de7e78fcb076ff",
+      "investigation_id": "inv-7b84923e501d4bb9aee9139d0d234c51"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.943481+00:00",
+      "event_type": "tool_call_failed",
+      "tool": "grafana_mcp",
+      "operation": "query",
+      "server": "grafana_mcp",
+      "status": "failed",
+      "safe_argument_summary": "Arguments omitted",
+      "reason": "Synthetic service and incident window available",
+      "correlation_id": "corr-dbdf93759aa348d796de7e78fcb076ff",
+      "investigation_id": "inv-7b84923e501d4bb9aee9139d0d234c51",
+      "error_type": "TimeoutError",
+      "error_code": null,
+      "duration_ms": 7.97
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.948235+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "retrieve_evidence",
+      "status": "failed"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.950917+00:00",
+      "event_type": "request_completed",
+      "status": "failed"
+    }
+  ]
+}

@@ -14,6 +14,9 @@ from mcp_types import RequestParams, ToolAnnotations
 from observability.audit import audit_event
 from observability.logging import configure_logging, get_logger
 
+from observability.trace import request_trace
+from observability.tool_calls import logged_tool_call
+
 from .bundle import BASE_URI, SKILL_URI, read_bundle
 
 EXTENSION_ID = "io.modelcontextprotocol/skills"
@@ -70,12 +73,15 @@ def create_server() -> MCPServer:
                        "size": len(data)} for name, data in bundle.items()],
     }
     async def exact_resource_uri(ctx, call_next):
-        # Check raw input before SDK URI parsing can normalize dot segments.
-        if ctx.method == "resources/read":
-            uri = (ctx.params or {}).get("uri")
-            if not isinstance(uri, str) or uri not in {BASE_URI + name for name in bundle}:
-                raise MCPError(-32602, "Unknown or unauthorized skill resource")
-        return await call_next(ctx)
+        with request_trace('skill_distribution'):
+            @logged_tool_call('skills_mcp', ctx.method, reason='Client requested skill distribution; retrieval does not activate the skill')
+            async def dispatch():
+                if ctx.method == "resources/read":
+                    uri = (ctx.params or {}).get("uri")
+                    if not isinstance(uri, str) or uri not in {BASE_URI + name for name in bundle}:
+                        raise MCPError(-32602, "Unknown or unauthorized skill resource")
+                return await call_next(ctx)
+            return await dispatch()
 
     server = MCPServer(
         "product-support-investigator-skills", version="0.1.0",
@@ -114,7 +120,8 @@ def create_server() -> MCPServer:
 def main():
     # stdout is reserved for MCP JSON-RPC frames when using stdio transport.
     configure_logging(stream=sys.stderr)
-    audit_event("configuration_changed", operation="server_started", status="success")
+    with request_trace("server_startup"):
+        audit_event("configuration_changed", operation="server_started", status="success")
     create_server().run(transport="stdio")
 
 

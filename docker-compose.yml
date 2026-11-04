@@ -1,6 +1,9 @@
 services:
   product-support-investigator:
     build: .
+    stdin_open: true
+    volumes:
+      - trace-data:/app/.psi-traces
     environment:
       PSI_LOG_LEVEL: INFO
       PSI_LOG_FORMAT: json
@@ -26,15 +29,15 @@ services:
     command: -config.file=/etc/promtail/config.yml
     volumes:
       - ./ops/promtail/config.yml:/etc/promtail/config.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - loki
 
   grafana:
+    profiles: [standalone-grafana]
     image: grafana/grafana:11.3.1
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
@@ -49,3 +52,4 @@ services:
 volumes:
   grafana-data:
   loki-data:
+  trace-data:

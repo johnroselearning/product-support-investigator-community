@@ -6,6 +6,9 @@ SECRET_KEY = re.compile(r"authorization|bearer|api[_-]?key|access[_-]?token|refr
 PRIVATE_KEY = re.compile(r"-----BEGIN [^-]*PRIVATE KEY-----.*?(?:-----END [^-]*PRIVATE KEY-----|$)", re.S)
 JWT = re.compile(r"\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b")
 BEARER = re.compile(r"(?i)\bBearer\s+[^\s,;]+")
+AUTH = re.compile(r"(?im)\b(?:authorization|proxy-authorization)\s*[:=]\s*(?:Basic|Bearer)\s+[^\s,;]+")
+COOKIES = re.compile(r"(?im)\b(?:cookie|set-cookie)\s*[:=]\s*[^\s;]+(?:;\s*[^\s;=]+=[^\s;]+)*")
+ISO = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$")
 HEADER = re.compile(r"(?im)\b(?:authorization|proxy-authorization|cookie|set-cookie)\s*[:=]\s*[^\s,;]+")
 EMAIL = re.compile(r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b", re.I)
 PHONE = re.compile(r"(?<!\w)(?:\+?\d[\d .()\-]{7,}\d)(?!\w)")
@@ -18,13 +21,15 @@ def redact(value, secrets=(), *, redact_pii=True):
         if secret:
             text = text.replace(str(secret), "[REDACTED_SECRET]")
     text = PRIVATE_KEY.sub("[REDACTED_SECRET]", text)
+    text = AUTH.sub("[REDACTED_SECRET]", text)
     text = BEARER.sub("Bearer [REDACTED_TOKEN]", text)
     text = JWT.sub("[REDACTED_TOKEN]", text)
+    text = COOKIES.sub("[REDACTED_SECRET]", text)
     text = HEADER.sub("[REDACTED_SECRET]", text)
     text = KEY_VALUE.sub(r"\1[REDACTED_SECRET]", text)
     if redact_pii:
         text = EMAIL.sub("[REDACTED_EMAIL]", text)
-        text = PHONE.sub("[REDACTED_PHONE]", text)
+        text = text if ISO.fullmatch(text) else PHONE.sub("[REDACTED_PHONE]", text)
     return text
 
 
@@ -35,7 +40,7 @@ def redact_mapping(value, secrets=(), *, redact_pii=True, max_depth=8):
         result = {}
         for key, item in value.items():
             safe_key = redact(key, secrets, redact_pii=redact_pii)
-            result[safe_key] = "[REDACTED_SECRET]" if SECRET_KEY.search(str(key)) else redact_mapping(item, secrets, redact_pii=redact_pii, max_depth=max_depth - 1)
+            result[safe_key] = "[REDACTED_SECRET]" if SECRET_KEY.search(str(key)) and not (str(key) == "user_authorization_present" and isinstance(item, bool)) else redact_mapping(item, secrets, redact_pii=redact_pii, max_depth=max_depth - 1)
         return result
     if isinstance(value, (list, tuple)):
         return [redact_mapping(item, secrets, redact_pii=redact_pii, max_depth=max_depth - 1) for item in value]

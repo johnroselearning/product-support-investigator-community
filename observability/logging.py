@@ -11,7 +11,7 @@ from .config import ObservabilityConfig
 from .context import get_context
 from .redaction import redact_mapping
 
-FIELDS = ("timestamp", "level", "service", "environment", "correlation_id", "investigation_id", "request_type", "issue_key", "actor_type", "component", "operation", "tool", "status", "duration_ms", "result_count", "error_type", "error_code", "log_type", "message")
+FIELDS = ("trace_id", "event_type", "reason", "applied", "skill_id", "phase_id", "server", "safe_argument_summary", "check_id", "passed", "timestamp", "level", "service", "environment", "correlation_id", "investigation_id", "request_type", "issue_key", "actor_type", "component", "operation", "tool", "status", "duration_ms", "result_count", "error_type", "error_code", "log_type", "message")
 
 
 class JsonFormatter(logging.Formatter):
@@ -24,15 +24,15 @@ class JsonFormatter(logging.Formatter):
         event = {
             "timestamp": datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
             "level": record.levelname, "service": self.config.service, "environment": self.config.environment,
-            "message": record.getMessage(),
+            "message": record.getMessage(), "event_type": record.__dict__.get("event_type", record.getMessage()),
+            "trace_id": None, "correlation_id": None, "investigation_id": None,
         }
         if context:
             event.update(context.as_dict())
         for field in FIELDS:
             if field in record.__dict__ and record.__dict__[field] is not None:
                 event[field] = record.__dict__[field]
-        if self.config.redact_sensitive_data:
-            event = redact_mapping(event)
+        event = redact_mapping(event)
         return json.dumps(event, ensure_ascii=False, separators=(",", ":"))
 
 

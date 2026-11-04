@@ -11,6 +11,7 @@ import inspect
 class InvestigationContext:
     correlation_id: str
     investigation_id: str | None = None
+    trace_id: str | None = None
     request_type: str | None = None
     issue_key: str | None = None
     actor_type: str | None = None

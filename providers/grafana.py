@@ -9,12 +9,15 @@ from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 from .evidence import MAX_OBSERVATIONS, envelope, finalize
 try:
+    from observability.trace.provider import traced_provider
     from observability.audit import audit_event
     from observability.context import ensure_investigation_context
     from observability.logging import get_logger
     from observability.tool_calls import logged_tool_call
 except ImportError:  # Keep the portable skill provider usable outside this repository.
     import logging
+    def traced_provider(function):
+        return function
     def audit_event(*args, **kwargs):
         return None
     def ensure_investigation_context(function):
@@ -119,6 +122,7 @@ class GrafanaProvider:
                 raise ProviderError('invalid_request')
 
     @ensure_investigation_context
+    @traced_provider
     def retrieve(self, request):
         if not isinstance(request, dict):
             request = {}

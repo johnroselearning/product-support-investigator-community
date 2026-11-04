@@ -1,0 +1,13 @@
+.git
+.venv*
+**/__pycache__
+**/node_modules
+.psi-traces
+.aws
+.codex
+.agents
+.env
+.env.*
+*.pem
+*.key
+forge-app/manifest.yml.backup

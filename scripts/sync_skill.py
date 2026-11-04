@@ -4,6 +4,8 @@
 Use --check in validation. Generated files are committed so clone/install works.
 """
 import argparse
+import json
+from hashlib import sha256
 from pathlib import Path
 import sys
 
@@ -35,6 +37,11 @@ def outputs():
         "Use relevant sections from the root skill; omit empty sections and mark unsupported fields Unknown.\n\n"
         + headings + "\n\nSee the canonical skill for evidence, hypothesis, confidence, and command requirements.\n"
     ).encode("utf-8")
+    from observability.trace.evaluator import CHECKLIST
+    files[ROOT / "forge-app/src/trace-contract.json"] = (json.dumps({
+        "schema_version": "1.0", "skill_version": "sha256:" + sha256(bundle["SKILL.md"]).hexdigest(),
+        "checks": CHECKLIST,
+    }, indent=2) + "\n").encode()
     return files
 
 

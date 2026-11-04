@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "skill_version": "sha256:e6566615ca9667b82d63a78e7e80fdb7ece9642093c39a68a66866b63a3b7df5",
+  "checks": {
+    "classify_request": "classify_request",
+    "decide_skill_usage": "decide_skill_usage",
+    "collect_issue_context": "collect_issue_context",
+    "select_tools_conditionally": "select_tools",
+    "use_read_only_default": null,
+    "separate_observed_inferred_unknown": "classify_evidence",
+    "test_hypotheses": "test_hypotheses",
+    "avoid_unsupported_claims": "validate_final_response",
+    "record_confidence": "calculate_confidence",
+    "disclose_missing_evidence": "validate_final_response"
+  }
+}

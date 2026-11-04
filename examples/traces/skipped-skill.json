@@ -1,0 +1,283 @@
+{
+  "schema_version": "1.0",
+  "trace_id": "trace-1a58d1b106dd4fa2a0fd12ab991831fa",
+  "correlation_id": "corr-fa66b62b943c418db903dfd4b2bf58dd",
+  "investigation_id": "inv-e4f29f30c5c7430792a93f82c5db71de",
+  "timestamp": "2026-11-03T19:26:30.879193+00:00",
+  "request_type": "general_question",
+  "request_summary_safe": "general_question",
+  "skill_id": "product-support-investigator",
+  "skill_version": "sha256:e6566615ca9667b82d63a78e7e80fdb7ece9642093c39a68a66866b63a3b7df5",
+  "skill_applied": false,
+  "skill_decision_reason": "Request does not diagnose a product or service problem",
+  "decision_confidence": null,
+  "phases": [
+    {
+      "phase_id": "classify_request",
+      "status": "passed",
+      "started_at": "2026-11-03T19:26:30.881917+00:00",
+      "completed_at": "2026-11-03T19:26:30.881924+00:00",
+      "safe_summary": "Classified by adapter request boundary",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "decide_skill_usage",
+      "status": "passed",
+      "started_at": "2026-11-03T19:26:30.884010+00:00",
+      "completed_at": "2026-11-03T19:26:30.884020+00:00",
+      "safe_summary": "Request does not diagnose a product or service problem",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "collect_issue_context",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.888212+00:00",
+      "completed_at": "2026-11-03T19:26:30.888219+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "identify_service",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.891628+00:00",
+      "completed_at": "2026-11-03T19:26:30.891640+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "identify_time_window",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.894311+00:00",
+      "completed_at": "2026-11-03T19:26:30.894325+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "select_tools",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.897114+00:00",
+      "completed_at": "2026-11-03T19:26:30.897142+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "retrieve_evidence",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.901985+00:00",
+      "completed_at": "2026-11-03T19:26:30.901999+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "classify_evidence",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.904607+00:00",
+      "completed_at": "2026-11-03T19:26:30.904621+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "test_hypotheses",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.907231+00:00",
+      "completed_at": "2026-11-03T19:26:30.907239+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "produce_findings",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.909716+00:00",
+      "completed_at": "2026-11-03T19:26:30.909724+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "calculate_confidence",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.912801+00:00",
+      "completed_at": "2026-11-03T19:26:30.912832+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    },
+    {
+      "phase_id": "validate_final_response",
+      "status": "skipped",
+      "started_at": "2026-11-03T19:26:30.916002+00:00",
+      "completed_at": "2026-11-03T19:26:30.916010+00:00",
+      "safe_summary": "Skill not applicable",
+      "evidence_references": [],
+      "error": null
+    }
+  ],
+  "instruction_checks": [
+    {
+      "id": "classify_request",
+      "status": "passed",
+      "evidence": "Recorded execution satisfies check"
+    },
+    {
+      "id": "decide_skill_usage",
+      "status": "passed",
+      "evidence": "Recorded execution satisfies check"
+    },
+    {
+      "id": "collect_issue_context",
+      "status": "skipped",
+      "evidence": "Not applicable to skipped skill"
+    },
+    {
+      "id": "select_tools_conditionally",
+      "status": "skipped",
+      "evidence": "Not applicable to skipped skill"
+    },
+    {
+      "id": "use_read_only_default",
+      "status": "passed",
+      "evidence": "Recorded execution satisfies check"
+    },
+    {
+      "id": "separate_observed_inferred_unknown",
+      "status": "skipped",
+      "evidence": "Not applicable to skipped skill"
+    },
+    {
+      "id": "test_hypotheses",
+      "status": "skipped",
+      "evidence": "Not applicable to skipped skill"
+    },
+    {
+      "id": "avoid_unsupported_claims",
+      "status": "skipped",
+      "evidence": "Not applicable to skipped skill"
+    },
+    {
+      "id": "record_confidence",
+      "status": "skipped",
+      "evidence": "Not applicable to skipped skill"
+    },
+    {
+      "id": "disclose_missing_evidence",
+      "status": "skipped",
+      "evidence": "Not applicable to skipped skill"
+    }
+  ],
+  "tools_considered": [],
+  "tools_called": [],
+  "tools_skipped": [],
+  "evidence_summary": [],
+  "hypotheses": [],
+  "read_only_mode": true,
+  "writes_attempted": 0,
+  "writes_completed": 0,
+  "writes_blocked": 0,
+  "write_reason": null,
+  "user_authorization_present": false,
+  "final_status": "skipped",
+  "final_confidence": null,
+  "errors": [],
+  "duration_ms": 39.11,
+  "events": [
+    {
+      "timestamp": "2026-11-03T19:26:30.879554+00:00",
+      "event_type": "skill_decision_started"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.881955+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "classify_request",
+      "status": "passed"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.884037+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "decide_skill_usage",
+      "status": "passed"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.886110+00:00",
+      "event_type": "skill_decision_completed",
+      "skill_id": "product-support-investigator",
+      "applied": false,
+      "request_type": "general_question",
+      "reason": "Request does not diagnose a product or service problem",
+      "confidence": null
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.888244+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "collect_issue_context",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.891659+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "identify_service",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.894339+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "identify_time_window",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.897194+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "select_tools",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.902019+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "retrieve_evidence",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.904647+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "classify_evidence",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.907256+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "test_hypotheses",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.909738+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "produce_findings",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.912880+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "calculate_confidence",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.916024+00:00",
+      "event_type": "phase_completed",
+      "phase_id": "validate_final_response",
+      "status": "skipped"
+    },
+    {
+      "timestamp": "2026-11-03T19:26:30.918659+00:00",
+      "event_type": "request_completed",
+      "status": "skipped"
+    }
+  ]
+}
