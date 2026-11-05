@@ -88,7 +88,8 @@ def create_server() -> MCPServer:
         instructions=(f"Read-only skill distribution. Discover with skills/list and skills/get "
                       f"when negotiated, or fallback tools list_skills/get_skill. "
                       f"Instructions: {SKILL_URI}. Supporting files use resources/read. "
-                      "Retrieval does not activate a skill or execute bundled code."),
+                      "Prefer resources/read for individual files; fallback get_skill(include_files=false) "
+                      "avoids returning the whole bundle. Retrieval does not activate a skill or execute bundled code."),
         extensions=[Skills(entry)], middleware=[exact_resource_uri],
     )
     for name, text in texts.items():
@@ -104,15 +105,17 @@ def create_server() -> MCPServer:
         return {"skills": [deepcopy(entry)]}
 
     @server.tool(annotations=annotations)
-    def get_skill(uri: str = SKILL_URI) -> dict[str, Any]:
+    def get_skill(uri: str = SKILL_URI, include_files: bool = True) -> dict[str, Any]:
         """Fallback tool (not skills/get): retrieve metadata, instructions, and every included file.
 
+        Use include_files=false for metadata, then resources/read for the core and
+        selected references. The true default preserves existing client contracts.
         Only the exact listed SKILL.md URI is accepted. Code files are inert text.
         """
         if uri != SKILL_URI:
             raise MCPError(-32602, "Unknown skill URI")
         return {"skill": deepcopy(entry),
-                "files": [{"uri": BASE_URI + name, "text": text} for name, text in texts.items()]}
+                "files": [{"uri": BASE_URI + name, "text": text} for name, text in texts.items()] if include_files else []}
 
     return server
 

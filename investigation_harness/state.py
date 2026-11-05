@@ -6,6 +6,7 @@ from uuid import uuid4
 from observability.redaction import redact as redact_pii
 from providers.evidence import redact as redact_secrets
 from . import VERSION
+from .registry import ResourceScope
 
 
 def safe(value, secrets=()):
@@ -67,6 +68,13 @@ class Policy:
     user_capabilities: frozenset[str] = frozenset()
     defaults: tuple[tuple[str, str], ...] = ()  # Only bounded time defaults accepted.
     model_destination: str = "local"
+    resource_scopes: tuple[ResourceScope, ...] = ()
+
+    def __post_init__(self):
+        if (not isinstance(self.resource_scopes, tuple) or
+                any(not isinstance(s, ResourceScope) for s in self.resource_scopes) or
+                len({s.scope_id for s in self.resource_scopes}) != len(self.resource_scopes)):
+            raise ValueError("Unique trusted resource scopes required")
 
 
 @dataclass
@@ -94,6 +102,17 @@ class Scope:
 class State:
     run_id: str = field(default_factory=lambda: uuid4().hex)
     parent_investigation_id: str | None = None
+    trace_id: str = field(default_factory=lambda: "trace-" + uuid4().hex)
+    correlation_id: str = field(default_factory=lambda: "corr-" + uuid4().hex)
+    work_item_id: str | None = None
+    workflow: str = "customer_investigation"
+    target_system: str = "unknown"
+    telemetry_target_system: str = "unknown"  # Only host-mapped IDs enter events.
+    evidence_scope: str = "customer_application"
+    requested_action: str = "diagnose"
+    evidence_needs: list | None = None
+    work_items: list = field(default_factory=list)
+    maintenance_drafts: list = field(default_factory=list)
     understanding: dict = field(default_factory=dict)
     selected_skill: str | None = None
     scope: Scope = field(default_factory=Scope)
@@ -114,18 +133,41 @@ class State:
     reserved_tokens: int = 0
     cost: int = 0
 
+    def __post_init__(self):
+        self.work_item_id = self.work_item_id or self.run_id
+
     def event(self, phase, **fields):
         # Callers may emit only fixed enums, booleans, counts, and internal IDs.
         allowed = {"status", "route", "skill", "count", "checks", "reason", "simulated", "capability", "tool", "provider", "duration_ms", "result_count", "retry_count",
-                   "evidence_refs", "model_calls", "cost_units", "reserved_tokens"}
+                   "evidence_refs", "model_calls", "cost_units", "reserved_tokens",
+                   "operation", "resource_scope_id", "error_type", "outcome", "test_id"}
         if fields.keys() - allowed:
             raise ValueError("Unsafe event field")
-        self.events.append({"run_id": self.run_id, "parent_investigation_id": self.parent_investigation_id,
-                            "version": VERSION, "phase": phase,
-                            "timestamp": utcnow(), **safe(fields)})
+        from observability.trace.schema import execution_metadata
+        from observability.trace import current_trace
+        from observability.logging import get_logger
+        event = {"timestamp": utcnow(), "event_type": "harness_" + phase,
+                 "run_id": self.run_id, "version": VERSION, "phase": phase,
+                 **execution_metadata(workflow=self.workflow, work_item_id=self.work_item_id,
+                     parent_investigation_id=self.parent_investigation_id, target_system=self.telemetry_target_system,
+                     status=fields.get("status", fields.get("reason") if phase == "termination" else None),
+                     outcome=fields.get("outcome")), **safe(fields),
+                 "trace_id": self.trace_id, "correlation_id": self.correlation_id,
+                 "investigation_id": self.run_id}
+        self.events.append(event)
+        recorder = current_trace()
+        if recorder:
+            recorder.event(event["event_type"], **{k: v for k, v in event.items() if k not in ("timestamp", "event_type")})
+        else:
+            get_logger("harness").info(event["event_type"], extra=event)
 
     def view(self):
+        from .workflows import request_categories
         return {"goal": self.understanding, "skill": self.selected_skill,
+                "categories": list(request_categories(self.workflow)) if self.workflow != "unknown" else [],
+                "workflow": self.workflow, "target_system": self.target_system,
+                "work_item_id": self.work_item_id, "evidence_scope": self.evidence_scope,
+                "requested_action": self.requested_action,
                 "scope": self.scope.candidates, "evidence": self.evidence,
                 "hypotheses": self.hypotheses,
                 "questions": self.questions, "assumptions": self.assumptions,

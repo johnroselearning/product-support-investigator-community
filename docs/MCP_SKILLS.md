@@ -53,7 +53,7 @@ The installed `mcp 2.2.0` SDK has public `Extension` / `MethodBinding` hooks and
 
 ## Included files and boundaries
 
-`skill_adapter/bundle.py` defines the explicit 13-file bundle: canonical `SKILL.md`, `COMMUNITY.md`, seven references, the optional Grafana script, and three provider source files. All supporting local paths required by these instructions are included. Documentation, other skills, Forge source, Git internals, environment files, and unrelated repository files are not exposed.
+`skill_adapter/bundle.py` defines the explicit 14-file bundle: canonical `SKILL.md`, `COMMUNITY.md`, eight references, the optional Grafana script, and three provider source files. All supporting local paths required by these instructions are included. Documentation, other skills, Forge source, Git internals, environment files, and unrelated repository files are not exposed.
 
 The adapter fails startup if an included file is missing, nonregular, or symlinked (including a symlinked parent inside the bundle). It reads an immutable snapshot at startup so file contents match the advertised digests even if the checkout changes later. It checks raw resource URIs against exact allowed strings before SDK URL normalization: dot segments, encoded paths, query strings, fragments, and unknown files are rejected with Invalid params (`-32602`). Unknown skill URIs also return `-32602`. The single-page catalog rejects cursors. Scripts are returned as plain text; retrieval never imports or executes them.
 
@@ -67,7 +67,9 @@ python3 scripts/sync_skill.py --check
 python3 scripts/package_plugin.py
 ```
 
-The generator copies the explicit bundle into `skills/product-support-investigator/` for isolated Codex/Claude installation, and composes the self-contained Forge prompt from canonical instructions plus separate Atlassian gate/platform sources. These committed outputs are generated artifacts, not separately maintained methodology. Skill validation, packaging, and CI check drift. MCP reads the canonical sources, not those generated copies.
+The generator copies the explicit bundle into `skills/product-support-investigator/` for isolated Codex/Claude installation. It generates the Forge skill core and supporting Markdown in the registered skill directory; the agent prompt contains the separate Atlassian gate, platform instructions and a short fallback, without embedding all playbooks. These committed outputs are generated artifacts, not separately maintained methodology. Skill validation, packaging, and CI check drift. MCP reads the canonical sources, not those generated copies.
+
+For progressive retrieval, use `resources/read` for the core and only the relevant directly linked references. Legacy clients can call `get_skill` with `include_files: false` for metadata, then read selected resources. Omitting that optional flag retains the original full-bundle response for compatibility. Such full-bundle calls still pay for all files; the server does not pretend to control the client's loading policy.
 
 ## Verify with a real client
 
@@ -80,4 +82,4 @@ python3 scripts/package_plugin.py
 
 The protocol tests launch the adapter from outside the checkout as a real stdio subprocess using the official SDK `Client` and `StdioServerParameters`. They verify modern discovery and legacy initialization, retrieve every file through resources and the fallback tool, compare instructions byte-for-byte with the root source, and verify manifest hashes/sizes. They exercise unknown skill URIs, missing and unauthorized resources, traversal/encoding attempts, missing bundle files, symlinks, portable reference closure, inert script retrieval, and preservation of the Atlassian gate.
 
-This verifies the MCP delivery protocol. End-to-end native skill activation in **Codex, Claude Desktop/Code, ChatGPT, or Rovo has not been tested**. Rovo continues to use its generated Forge prompt and existing action; it does not consume this MCP server. Plugin installation and the larger generated Rovo prompt still require a clean named-client/Forge validation session before release. No merge, publication, installation on an Atlassian site, or deployment is part of this change.
+This verifies the MCP delivery protocol. End-to-end native skill activation in **Codex, Claude Desktop/Code, ChatGPT, or Rovo has not been tested**. Rovo uses its generated prompt, packaged skill directory and existing action; it does not consume this MCP server. Plugin installation and Forge skill/reference selection still require a named-client/Forge validation session before release. No merge, publication, installation on an Atlassian site, or deployment is part of this change. See [optimization findings](optimization/ARCHITECTURE.md).

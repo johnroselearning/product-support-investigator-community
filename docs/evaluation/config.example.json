@@ -1,0 +1,20 @@
+{
+  "candidate": {
+    "provider": "YOUR_PROVIDER",
+    "model": "YOUR_MODEL",
+    "transport": "chat_completions",
+    "endpoint": "https://YOUR_PROVIDER.example/v1/chat/completions",
+    "api_key_env": "PSI_EVAL_API_KEY",
+    "temperature": 0,
+    "generation": {},
+    "timeout_seconds": 60,
+    "retries": 0
+  },
+  "limits": {
+    "seconds": 900,
+    "call_seconds": 60,
+    "output_tokens": 2000,
+    "model_calls": 20,
+    "model_tokens": 1000000
+  }
+}

@@ -1,20 +1,23 @@
 """One bounded investigation loop. All executions pass the same policy checks."""
 import asyncio
 from copy import deepcopy
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
+import re
 import time
 
 from .contracts import (ContractError, FINDINGS, RECORD, REPORT, RESULT, SCOPE,
                         UNDERSTANDING, json_size, obj, string, validate)
-from .policy import failure_reason, prepare, readiness, timestamp
+from .policy import failure_reason, prepare, readiness, timestamp, resource_scope, record_in_work_item
 from .reports import finalize_report, needs_critic
 from .semantic import ConservativeCritic
 from .state import Limits, State, safe, utcnow
 from .service_map import ServiceMap
+from .workflows import activate, validate_plan
+from .context import load_context
 
 ROOT = Path(__file__).resolve().parents[1]
 ROUTING = json.loads((Path(__file__).with_name("routing.json")).read_text())
@@ -25,19 +28,29 @@ class BudgetExhausted(Exception):
 
 
 class Harness:
-    def __init__(self, adapter, registry, policy, *, limits=None, critic=None, secrets=(), clock=time.monotonic, service_map=None):
+    def __init__(self, adapter, registry, policy, *, limits=None, critic=None, secrets=(), clock=time.monotonic, service_map=None, profiler=None):
         self.adapter, self.registry, self.policy = adapter, registry, policy
         self.limits, self.critic = limits or Limits(), critic or ConservativeCritic()
         self.secrets, self.clock = tuple(secrets), clock
         self.service_map = service_map or ServiceMap()
+        # Optional local observer, never a model input or execution dependency.
+        self.profiler = profiler
 
     async def run(self, request, *, parent_investigation_id=None):
         # A new runner is used per run. Configuration and policy never enter mutable state.
         if parent_investigation_id is not None:
-            validate(parent_investigation_id, string(64))
-            if not parent_investigation_id.isalnum():
+            validate(parent_investigation_id, string(128))
+            if not re.fullmatch(r"[A-Za-z0-9_-]+", parent_investigation_id):
                 raise ValueError("Invalid parent investigation ID")
         self.state = State(parent_investigation_id=parent_investigation_id)
+        from observability.trace import current_trace
+        recorder = current_trace()
+        if recorder:
+            self.state.trace_id = recorder.trace.trace_id
+            self.state.correlation_id = recorder.trace.correlation_id
+            self.state.run_id = recorder.trace.investigation_id
+            self.state.work_item_id = self.state.run_id
+        self.state.workflow = "unknown"
         self.started = self.clock()
         self.seen = set()
         self.references = None
@@ -50,49 +63,28 @@ class Harness:
                                    "artifacts": {"type": "array", "items": RECORD, "maxItems": 20},
                                    "scope": SCOPE}))
             request = safe(request, self.secrets)
-            for key, value in request["scope"].items():
-                state.scope.add(key, value, "user_provided", "request:scope")
             for i, artifact in enumerate(request["artifacts"]):
-                # Caller-supplied facts are untrusted evidence, never access grants.
                 self.add_evidence(artifact, "supplied", 0, source_locator=f"artifact:{i}")
             understanding = await self.model("understand", {"request": request, "routing": ROUTING,
                                                            "evidence": state.evidence}, UNDERSTANDING)
             if not understanding["goals"]:
                 raise ContractError("empty_goals")
-            state.understanding = understanding
-            for item in understanding["scope"]:
-                locator = item["locator"]
-                if item["source"] == "user_provided":
-                    sources = {f"message:{i}": text for i, text in enumerate(request["messages"])}
-                    sources.update({f"artifact:{i}": a["excerpt"] for i, a in enumerate(request["artifacts"])})
-                    if locator not in sources or item["value"] not in sources[locator]:
-                        raise ContractError("unsupported_scope_provenance")
-                state.scope.add(item["field"], item["value"], item["source"], locator)
             if any(ref not in {e["id"] for e in state.evidence} for ref in understanding["evidence_refs"]):
                 raise ContractError("unsupported_evidence_reference")
-            route = understanding["route"]
-            state.selected_skill = ROUTING["skill"] if route.startswith("investigate_") else None
-            state.event("routing", route=route, simulated=self.adapter.simulated)
-            state.event("skill_selection", skill=state.selected_skill, status="selected" if state.selected_skill else "skipped")
-            if state.selected_skill:
-                # Load selected sections, with source locators and digests. Keep the
-                # full skill on disk; do not resend all playbooks at every step.
-                sections = {"SKILL.md": ("Investigation Principles", "Evidence Model", "Root Cause Assessment"),
-                            "references/evidence-providers.md": ("Trust and privacy",)}
-                self.references = {}
-                for name, headings in sections.items():
-                    text = (ROOT / name).read_text()
-                    excerpts = [text.split("## " + heading + "\n", 1)[1].split("\n## ", 1)[0] for heading in headings]
-                    self.references[name] = {"sha256": hashlib.sha256(text.encode()).hexdigest(),
-                                             "sections": dict(zip(headings, excerpts))}
-            if route == "clarify":
-                state.questions.extend(understanding["ambiguities"][:1] or ["Which issue or environment should this request address?"])
-                state.termination = "clarification_essential"
-            elif route == "direct_answer":
-                state.termination = "direct_answer"
+            validate_plan(understanding)
+            state.understanding = understanding
+            state.workflow = understanding["decision"]
+            supplied = state.evidence
+            state.evidence = []
+            if understanding["decision"] == "mixed":
+                await self.mixed(request, understanding, supplied)
             else:
-                await self.investigate()
-            await self.report()
+                if understanding["work_items"]:
+                    activate(state, understanding["work_items"][0], request, understanding, supplied, self.policy)
+                    if any(not record_in_work_item(r, state, self.policy, supplied=True) for r in state.evidence):
+                        state.evidence = []
+                        raise ContractError("cross_work_item_evidence")
+                await self.process_work_item()
         except BudgetExhausted:
             state.termination = "budget_exhausted"
             self.partial("Execution or model budget exhausted; retained evidence is incomplete.")
@@ -108,6 +100,79 @@ class Harness:
                     duration_ms=round(state.elapsed_seconds * 1000), model_calls=state.model_calls,
                     cost_units=state.cost, reserved_tokens=state.reserved_tokens)
         return state
+
+    async def process_work_item(self):
+        state = self.state
+        understanding = state.understanding
+        route = understanding["route"]
+        state.selected_skill = ROUTING["skill"] if route.startswith("investigate_") else None
+        state.event("routing", route=route, simulated=self.adapter.simulated)
+        state.event("skill_selection", skill=state.selected_skill, status="selected" if state.selected_skill else "skipped")
+        self.references = load_context(state)
+        if route == "clarify":
+            state.questions.extend(understanding["ambiguities"][:1] or ["Which issue or environment should this request address?"])
+            state.termination = "clarification_essential"
+        elif route == "direct_answer":
+            state.termination = "direct_answer"
+        else:
+            await self.investigate()
+        await self.report()
+        if state.workflow == "psi_maintenance" and state.requested_action in ("draft_issue", "propose_tests"):
+            from .maintenance import prepare_draft
+            defect = understanding["work_items"][0]["defect_type"]
+            if defect == "unknown":
+                state.questions.append("Which PSI behavior should the maintenance draft describe?")
+            else:
+                state.maintenance_drafts.append(prepare_draft(state, defect, requested=True))
+
+    async def mixed(self, request, understanding, supplied):
+        root, original_limits = self.state, self.limits
+        root.work_item_id = None
+        root.event("routing", route=understanding["route"], simulated=self.adapter.simulated)
+        try:
+            for item in understanding["work_items"]:
+                child_started = self.clock()
+                child = State(parent_investigation_id=root.run_id, trace_id=root.trace_id,
+                              correlation_id=root.correlation_id)
+                root.work_items.append(child)
+                self.state = child
+                self.seen = set()
+                self.references = None
+                self.limits = replace(original_limits,
+                    tool_calls=max(0, original_limits.tool_calls-root.calls),
+                    model_calls=max(0, original_limits.model_calls-root.model_calls),
+                    model_tokens=max(0, original_limits.model_tokens-root.reserved_tokens),
+                    cost_units=max(0, original_limits.cost_units-root.cost))
+                child.budgets = asdict(self.limits)
+                try:
+                    activate(child, item, request, understanding, supplied, self.policy, mixed=True)
+                    if any(not record_in_work_item(r, child, self.policy, supplied=True) for r in child.evidence):
+                        child.evidence = []
+                        raise ContractError("cross_work_item_evidence")
+                    await self.process_work_item()
+                except BudgetExhausted:
+                    child.termination = "budget_exhausted"
+                    self.partial("Shared execution or model budget exhausted.")
+                except (ContractError, ValueError, TypeError, KeyError):
+                    child.termination = "invalid_contract"
+                    self.partial("The work item failed its scope or input contract.")
+                except Exception:
+                    child.termination = "execution_failure"
+                    self.partial("A component failed; private exception content was omitted.")
+                child.elapsed_seconds = round(max(0, self.clock() - child_started), 6)
+                child.event("termination", reason=child.termination, count=child.calls,
+                            duration_ms=round(child.elapsed_seconds * 1000))
+                root.calls += child.calls
+                root.model_calls += child.model_calls
+                root.reserved_tokens += child.reserved_tokens
+                root.cost += child.cost
+                root.usage.extend(child.usage)
+            root.termination = "mixed_completed"
+            root.report = {"answer": "Separate workflow findings; review each work item and its limitations.",
+                           "work_items": [{"work_item_id": c.work_item_id, "workflow": c.workflow,
+                                           "report": c.report} for c in root.work_items]}
+        finally:
+            self.state, self.limits = root, original_limits
 
     def remaining(self):
         return self.limits.seconds - (self.clock() - self.started)
@@ -130,6 +195,19 @@ class Harness:
             raise BudgetExhausted()
         state.model_calls += 1
         state.reserved_tokens += reservation
+        capture_id = None
+        if self.profiler is not None:
+            try:
+                target = getattr(self.critic, "adapter", self.critic) if critic else self.adapter
+                kind = ("deterministic_critic" if critic and isinstance(self.critic, ConservativeCritic) else
+                        "scripted_adapter" if getattr(target, "simulated", False) else "harness_intermediate")
+                capture_id = self.profiler.observe(stage, deepcopy(payload), kind=kind,
+                    metadata={"trace_id": state.trace_id, "correlation_id": state.correlation_id,
+                              "investigation_id": state.run_id, "work_item_id": state.work_item_id,
+                              "parent_investigation_id": state.parent_investigation_id})
+            except Exception:
+                # Observer failures must not change routing, payloads, or execution.
+                pass
         call = self.critic.review(payload, limits.output_tokens) if critic else self.adapter.decide(stage, payload, limits.output_tokens)
         try:
             decision = await asyncio.wait_for(call, timeout=min(self.remaining(), limits.call_seconds))
@@ -142,6 +220,12 @@ class Harness:
         counts = (decision.input_tokens, decision.output_tokens)
         if any(v is not None and (type(v) is not int or v < 0) for v in counts):
             raise ContractError("invalid_usage")
+        if self.profiler is not None and capture_id is not None:
+            try:
+                self.profiler.attach_usage(capture_id, {"usage": {"input_tokens": counts[0], "output_tokens": counts[1]}},
+                                           adapter_reported=True)
+            except Exception:
+                pass
         state.usage.append({"stage": stage, "input_tokens": counts[0], "output_tokens": counts[1],
                             "measurement": "provider" if all(v is not None for v in counts) else "unavailable_or_partial",
                             "reserved_token_estimate": reservation, "estimate_method": "utf8_input_bytes_plus_output_byte_cap"})
@@ -154,7 +238,7 @@ class Harness:
     async def investigate(self):
         state = self.state
         while state.termination is None:
-            choice = await self.model("choose", {"state": state.view(), "capabilities": self.registry.catalog(),
+            choice = await self.model("choose", {"state": state.view(), "capabilities": self.registry.catalog(state, self.policy, relevant_only=True),
                                                 "method": self.references,
                                                 "service_leads": self.service_map.leads(state.scope.get("service"))},
                                       obj({"kind": string(values=("action", "report", "clarify")),
@@ -180,7 +264,8 @@ class Harness:
             if not contract:
                 reason = "unavailable_tool" if name in self.registry.capabilities else "unavailable_capability"
                 state.actions.append({"capability": name, "status": reason})
-                state.event("readiness", status=reason)
+                event_capability = name if name in self.registry.capabilities else "unknown_capability"
+                state.event("readiness", status=reason, capability=event_capability, operation=event_capability)
                 state.questions.append("The selected evidence capability has no available binding.")
                 continue
             # Once loaded, the binding's real schema is visible to the semantic adapter.
@@ -191,7 +276,9 @@ class Harness:
             inputs = prepare(action, state, self.registry, self.policy, self.limits, use_defaults=False)
             checks = readiness(action, inputs, state, self.registry, self.policy, self.limits, self.remaining())
             reason = failure_reason(checks)
-            state.event("readiness", status=reason or "ready", checks=checks)
+            mapping = resource_scope(name, inputs, state, self.registry, self.policy)
+            state.event("readiness", status=reason or "ready", checks=checks, capability=name,
+                        operation=name, resource_scope_id=mapping.scope_id if mapping else None)
             if reason:
                 if reason in ("ambiguous_scope", "missing_input") and await self.recover_scope(name):
                     # Retry the original proposal after authorized retrieval. Every
@@ -207,12 +294,13 @@ class Harness:
                 state.event("readiness", status=reason or "ready", checks=checks)
             if reason:
                 state.actions.append({"capability": name, "inputs": safe(inputs), "status": reason, "checks": checks})
-                if reason in ("ambiguous_scope", "missing_input"):
+                if reason in ("ambiguous_scope", "missing_input", "unknown_resource_mapping"):
                     # The semantic planner has already had conversation, issue retrieval
                     # and discovery alternatives available; ask one focused question.
                     field = next((k for k in contract["inputs"]["required"]
                                   if state.scope.conflict(k) or not inputs.get(k) or state.scope.inferred_only(k)), "scope")
-                    state.questions.append(f"Which {field} should the next evidence check use?")
+                    state.questions.append("Which authorized resource mapping applies to this target system?" if
+                        reason == "unknown_resource_mapping" else f"Which {field} should the next evidence check use?")
                     state.termination = "clarification_essential"
                 else:
                     state.questions.append("The next evidence action was blocked: " + reason)
@@ -257,6 +345,8 @@ class Harness:
     async def execute(self, name, inputs):
         state, limits = self.state, self.limits
         binding = self.registry.bindings[name]
+        mapping = resource_scope(name, inputs, state, self.registry, self.policy)
+        scope_id = mapping.scope_id if mapping else None
         for attempt in range(limits.retries + 1):
             checks = readiness({"capability": name}, inputs, state, self.registry, self.policy, limits, self.remaining())
             if failure_reason(checks):
@@ -264,8 +354,10 @@ class Harness:
             call_started = self.clock()
             state.calls += 1
             state.cost += binding.cost_units
-            state.event("call", status="started", count=state.calls, capability=name, tool=binding.tool, provider=binding.provider)
+            state.event("call", status="started", count=state.calls, capability=name, operation=name,
+                        resource_scope_id=scope_id, tool=binding.tool, provider=binding.provider)
             transient_timeout = False
+            error_type = None
             try:
                 result = await asyncio.wait_for(binding.handler(deepcopy(inputs), min(self.remaining(), limits.call_seconds)),
                                                 timeout=min(self.remaining(), limits.call_seconds))
@@ -282,7 +374,10 @@ class Harness:
                     raise ContractError("invalid_result_status")
                 # Never ingest returned cross-scope data or authorize new tenants.
                 for record in result["records"]:
-                    for key in ("tenant", "environment", "repository", "datasource"):
+                    record.setdefault("evidence_scope", "psi_execution" if mapping and mapping.role == "psi_grafana" else state.evidence_scope)
+                    if not record_in_work_item(record, state, self.policy):
+                        raise ContractError("cross_work_item_result")
+                    for key in ("tenant", "environment", "repository", "datasource", "service"):
                         if key in inputs and record["scope"].get(key) != inputs[key]:
                             raise ContractError("cross_scope_result")
                     allowed_scope = {"tenant": self.policy.tenants, "environment": self.policy.environments,
@@ -299,12 +394,14 @@ class Harness:
                 raise
             except Exception as error:
                 transient_timeout = isinstance(error, TimeoutError)
+                error_type = "TimeoutError" if transient_timeout else "ContractError" if isinstance(error, ContractError) else "ProviderError"
                 result = {"status": "execution_failure", "records": [], "resolved": {}, "next_cursor": "",
                           "limitations": ["Provider failure or invalid result; not application evidence."]}
             state.actions.append({"capability": name, "tool": binding.tool, "provider": binding.provider,
                                   "inputs": safe(inputs), "status": result["status"],
                                   "next_cursor": result["next_cursor"], "attempt": attempt + 1})
             state.event("call", status=result["status"], count=state.calls, capability=name,
+                        operation=name, resource_scope_id=scope_id, error_type=error_type,
                         tool=binding.tool, provider=binding.provider, retry_count=attempt,
                         duration_ms=round(max(0, self.clock() - call_started) * 1000),
                         result_count=len(result["records"]))
@@ -330,6 +427,7 @@ class Harness:
         state = self.state
         validate(record, RECORD)
         record = safe(deepcopy(record), self.secrets)
+        record.setdefault("evidence_scope", "customer_application" if source == "supplied" else state.evidence_scope)
         if source_locator:
             record["supplied_at"] = source_locator
         identity = (record["locator"], record["excerpt"], json.dumps(record["scope"], sort_keys=True))
@@ -344,7 +442,8 @@ class Harness:
             stale = freshness > 0 and abs((datetime.now(timezone.utc) - timestamp(record["timestamp"])).total_seconds()) > freshness
         except (ValueError, TypeError):
             stale = True
-        state.evidence.append({**record, "id": f"E{len(state.evidence) + 1}", "source": source,
+        next_id = max((int(e["id"][1:]) for e in state.evidence), default=0) + 1
+        state.evidence.append({**record, "id": f"E{next_id}", "source": source,
                                "classification": "observed", "trust": "untrusted_data", "stale": stale})
 
     async def report(self):

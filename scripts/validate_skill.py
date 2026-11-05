@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import re, sys, json, subprocess
+import yaml
 
 root = Path(__file__).resolve().parents[1]
 skill = root / "SKILL.md"
@@ -27,6 +28,15 @@ else:
         errors.append("skill name mismatch")
     if "description:" not in text:
         errors.append("description missing")
+    try:
+        metadata = yaml.safe_load(text.split("---\n", 2)[1])
+        if not isinstance(metadata, dict) or not isinstance(metadata.get("description"), str) or not 1 <= len(metadata["description"]) <= 1024:
+            errors.append("Invalid skill description")
+        name = metadata.get("name")
+        if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name) or len(name) > 64:
+            errors.append("Invalid skill name")
+    except (yaml.YAMLError, IndexError, AttributeError):
+        errors.append("Invalid YAML frontmatter")
     if len(text.splitlines()) > 500:
         errors.append("SKILL.md exceeds 500 lines")
 

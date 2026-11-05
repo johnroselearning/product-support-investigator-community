@@ -78,6 +78,9 @@ class ProtocolTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(fallback.structured_content["skill"], entry)
             self.assertEqual({f["uri"]: f["text"].encode() for f in fallback.structured_content["files"]},
                              {BASE_URI+n: data for n, data in bundle.items()})
+            compact = await c.call_tool("get_skill", {"uri": SKILL_URI, "include_files": False})
+            self.assertEqual(compact.structured_content["skill"], entry)
+            self.assertEqual(compact.structured_content["files"], [])
 
     async def test_invalid_requests_over_wire(self):
         async with client() as c:

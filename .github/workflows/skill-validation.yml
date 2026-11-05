@@ -1,5 +1,7 @@
 name: Skill validation
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   skills:
     runs-on: ubuntu-latest
@@ -13,3 +15,8 @@ jobs:
       - run: python -m unittest discover -s tests -p 'test_*.py'
       - run: python -m investigation_harness.evaluate --split all
       - run: python scripts/package_plugin.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node --test forge-app/src/trace.test.mjs forge-app/src/response.test.mjs forge-app/src/jira-evidence.test.mjs
+      - run: python scripts/benchmark_optimization.py --label C --output /tmp/psi-benchmark.json --repeats 1

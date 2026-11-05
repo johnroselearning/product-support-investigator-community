@@ -13,7 +13,9 @@ FILES = (
     "references/authentication-investigation.md",
     "references/webhook-investigation.md",
     "references/escalation-framework.md",
-    "references/evidence-providers.md", "references/grafana.md",
+    "references/evidence-providers.md", "references/grafana.md", "references/github.md",
+    "references/workflows.md",
+    "references/reporting.md",
     "scripts/grafana_evidence.py",
     "providers/__init__.py", "providers/evidence.py", "providers/grafana.py",
 )
