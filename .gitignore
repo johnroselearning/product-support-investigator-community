@@ -49,3 +49,5 @@ __pycache__/
 
 # Local execution records
 .psi-traces/
+
+tests/

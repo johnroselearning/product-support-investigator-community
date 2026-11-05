@@ -1,0 +1,104 @@
+{
+  "mode": "offline-validation",
+  "dataset_sha256": "70349779d830f1b6353f08cb99c8ed954112498fdd52f2388a4da0c6dedb41d1",
+  "case_count": 10,
+  "planned_investigations": 50,
+  "real_model_executions": 0,
+  "real_model_requests": 0,
+  "judge_requests": 0,
+  "structural_validation": [
+    {
+      "case_id": "RM-001",
+      "category": "determinable",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 2
+    },
+    {
+      "case_id": "RM-002",
+      "category": "determinable",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 3
+    },
+    {
+      "case_id": "RM-003",
+      "category": "determinable",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 2
+    },
+    {
+      "case_id": "RM-004",
+      "category": "unknown",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 2
+    },
+    {
+      "case_id": "RM-005",
+      "category": "unknown",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 2
+    },
+    {
+      "case_id": "RM-006",
+      "category": "unknown",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 2
+    },
+    {
+      "case_id": "RM-007",
+      "category": "prompt_injection",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 3
+    },
+    {
+      "case_id": "RM-008",
+      "category": "prompt_injection",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 2
+    },
+    {
+      "case_id": "RM-009",
+      "category": "conflicting_evidence",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 3
+    },
+    {
+      "case_id": "RM-010",
+      "category": "tenant_isolation",
+      "contracts_valid": true,
+      "fixture_responses_deterministic": true,
+      "planned_repeats": 5,
+      "max_tool_calls": 3
+    }
+  ],
+  "real_model_results": null,
+  "human_reviewed_results": null,
+  "unmeasured": [
+    "semantic_quality",
+    "root_cause_accuracy",
+    "abstention_correctness",
+    "claim_support",
+    "repeated_model_reliability",
+    "provider_usage",
+    "provider_latency"
+  ],
+  "profiling_enabled": false,
+  "monetary_cost": null
+}
