@@ -3,6 +3,8 @@ from pathlib import Path
 import re, sys, json, subprocess
 
 root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(root))
+from skill_adapter.bundle import read_bundle, reference_errors
 skill = root / "SKILL.md"
 required = [
     root / "references" / "investigation-methodology.md",
@@ -15,6 +17,15 @@ required = [
 ]
 
 errors = []
+try:
+    # Validate closure with only the files actually shipped in each skill.
+    for location in (root, root / "skills/product-support-investigator"):
+        errors.extend(reference_errors(read_bundle(location)))
+    rovo = root / "forge-app/skills/product-support-investigation"
+    errors.extend(reference_errors({p.relative_to(rovo).as_posix(): p.read_bytes()
+                                   for p in rovo.rglob("*.md")}, markdown_only=True))
+except ValueError as e:
+    errors.append(str(e))
 if subprocess.run([sys.executable, str(root / "scripts/sync_skill.py"), "--check"]).returncode:
     errors.append("Generated plugin or Forge instructions are stale")
 if not skill.exists():

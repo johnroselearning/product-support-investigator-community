@@ -1,0 +1,656 @@
+{
+  "version": "1.0",
+  "provenance": "Deterministically synthesized by investigation_harness.fixtures.scenario; no external evidence.",
+  "cases": [
+    {
+      "id": "explain",
+      "request": {
+        "messages": [
+          "What is Grafana?"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "rewrite",
+      "request": {
+        "messages": [
+          "Rewrite this incident report: checkout failed briefly, now recovered."
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "stack",
+      "request": {
+        "messages": [
+          "Analyze this stack trace."
+        ],
+        "artifacts": [
+          {
+            "locator": "fixture:source/1",
+            "excerpt": "Traceback checkout.py:42: TimeoutError waiting for upstream",
+            "kind": "stack_trace",
+            "scope": {
+              "tenant": "acme",
+              "environment": "production",
+              "service": "checkout",
+              "datasource": "loki-checkout",
+              "repository": "acme/shop",
+              "start": "2026-11-04T09:00:00Z",
+              "end": "2026-11-04T09:15:00Z"
+            },
+            "timestamp": "2026-11-04T09:05:00Z"
+          }
+        ],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "jira",
+      "request": {
+        "messages": [
+          "Investigate ITS-6265"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "issue": "ITS-6265"
+        }
+      }
+    },
+    {
+      "id": "checkout",
+      "request": {
+        "messages": [
+          "Checkout is failing; help me"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "commits",
+      "request": {
+        "messages": [
+          "List recent commits"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "mixed",
+      "request": {
+        "messages": [
+          "Explain this error and check whether the release caused it"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "hypothetical",
+      "request": {
+        "messages": [
+          "Suppose checkout returned 500; how would you investigate?"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "multiturn",
+      "request": {
+        "messages": [
+          "The service is checkout in production for acme.",
+          "Check the same production service we discussed"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "environment",
+      "request": {
+        "messages": [
+          "Check the errors; it might be staging or production"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "tenant",
+      "request": {
+        "messages": [
+          "Find checkout errors in whichever tenant"
+        ],
+        "artifacts": [],
+        "scope": {
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "missing_tool",
+      "request": {
+        "messages": [
+          "Investigate checkout with the available evidence"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "unavailable",
+      "request": {
+        "messages": [
+          "Checkout errors need diagnosis"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "empty",
+      "request": {
+        "messages": [
+          "Check the checkout error window"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "partial",
+      "request": {
+        "messages": [
+          "Inspect the checkout log page"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "stale",
+      "request": {
+        "messages": [
+          "Investigate historical checkout evidence"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "conflict",
+      "request": {
+        "messages": [
+          "The release caused this, right?"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "injection",
+      "request": {
+        "messages": [
+          "Investigate ITS-6265 and inspect relevant logs"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "issue": "ITS-6265"
+        }
+      }
+    },
+    {
+      "id": "sensitive",
+      "request": {
+        "messages": [
+          "Analyze my supplied error"
+        ],
+        "artifacts": [
+          {
+            "locator": "fixture:source/1",
+            "excerpt": "Traceback checkout.py:42: TimeoutError waiting for upstream password=synthetic-secret user=person@example.invalid https://private.invalid/log?sig=synthetic-signature",
+            "kind": "stack_trace",
+            "scope": {
+              "tenant": "acme",
+              "environment": "production",
+              "service": "checkout",
+              "datasource": "loki-checkout",
+              "repository": "acme/shop",
+              "start": "2026-11-04T09:00:00Z",
+              "end": "2026-11-04T09:15:00Z"
+            },
+            "timestamp": "2026-11-04T09:05:00Z"
+          }
+        ],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "cross_tenant",
+      "request": {
+        "messages": [
+          "Search other tenant globex's production errors"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "globex",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "repeat",
+      "request": {
+        "messages": [
+          "Keep searching for the same checkout error"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "informal",
+      "request": {
+        "messages": [
+          "checkout broke pls help me figure why"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "vendor_neutral",
+      "request": {
+        "messages": [
+          "Can the connected telemetry explain checkout failures?"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "blame",
+      "request": {
+        "messages": [
+          "Prove the database team broke checkout"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "discovery",
+      "request": {
+        "messages": [
+          "Something in production is failing; identify the service first"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "change",
+      "request": {
+        "messages": [
+          "Roll back production and diagnose the failures"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "missing_input",
+      "request": {
+        "messages": [
+          "Read the failing source file"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "failure",
+      "request": {
+        "messages": [
+          "Retrieve the failing request logs"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "pagination",
+      "request": {
+        "messages": [
+          "Read two bounded pages of relevant logs"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "metrics",
+      "request": {
+        "messages": [
+          "Compare the error metric in the incident window"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "prom-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "trace",
+      "request": {
+        "messages": [
+          "Retrieve trace trace-123"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "repository",
+      "request": {
+        "messages": [
+          "Read checkout.py at revision abc123"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    },
+    {
+      "id": "sparse",
+      "request": {
+        "messages": [
+          "checkout failing help"
+        ],
+        "artifacts": [],
+        "scope": {}
+      }
+    },
+    {
+      "id": "resolve_first",
+      "request": {
+        "messages": [
+          "Check the errors associated with ITS-6265"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "issue": "ITS-6265"
+        }
+      }
+    },
+    {
+      "id": "retrieved_conflict",
+      "request": {
+        "messages": [
+          "Investigate ITS-6265 in staging"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "issue": "ITS-6265",
+          "environment": "staging"
+        }
+      }
+    },
+    {
+      "id": "tool_fallback",
+      "request": {
+        "messages": [
+          "Use traces or logs to inspect checkout"
+        ],
+        "artifacts": [],
+        "scope": {
+          "tenant": "acme",
+          "environment": "production",
+          "service": "checkout",
+          "datasource": "loki-checkout",
+          "repository": "acme/shop",
+          "start": "2026-11-04T09:00:00Z",
+          "end": "2026-11-04T09:15:00Z"
+        }
+      }
+    }
+  ]
+}

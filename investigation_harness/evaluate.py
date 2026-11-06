@@ -10,8 +10,8 @@ from . import VERSION
 from .engine import Harness
 from .fixtures import fixture_registry, policy, scenario
 from .state import utcnow
+from .corpus import INPUTS as DATA, load_cases
 
-DATA = Path(__file__).resolve().parents[1] / "investigation_harness/evaluation_cases.v1.json"
 
 
 def grade(state, expected):
@@ -43,7 +43,7 @@ def grade(state, expected):
 
 
 async def evaluate(split="all", factory=None):
-    dataset = json.loads(DATA.read_text())
+    dataset = load_cases()
     rows, counts = [], Counter()
     for case in dataset["cases"]:
         if split != "all" and case["split"] != split:

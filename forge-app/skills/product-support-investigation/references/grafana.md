@@ -1,6 +1,6 @@
 # Grafana provider
 
-Apply the common provider contract selected by the core. The optional adapter in `providers/grafana.py` supports Grafana instances exposing the datasource UID proxy API, Loki streams, and Prometheus-compatible range-query matrices. Other datasource plugins are unsupported, not failures of the investigated application. There is no dashboard, alert, datasource, user, organization, or configuration write capability.
+Read [the common contract](evidence-providers.md) first. The optional adapter in `providers/grafana.py` supports Grafana instances exposing the datasource UID proxy API, Loki streams, and Prometheus-compatible range-query matrices. Other datasource plugins are unsupported, not failures of the investigated application. There is no dashboard, alert, datasource, user, organization, or configuration write capability.
 
 ## Local request example (synthetic)
 

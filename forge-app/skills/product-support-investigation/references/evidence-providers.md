@@ -4,7 +4,7 @@ Investigation reasoning chooses the question, evaluates evidence, and chooses th
 
 ## Request
 
-Supply `evidence_id` (ledger ID such as E7), `purpose` (the question this query answers), and `operation` (`health`, `datasources`, `logs`, or `metrics`). Telemetry requests include `scope.start_time` and `scope.end_time` as timezone-aware ISO timestamps; service/environment are descriptive unless enforced by actual selectors. `identifiers` can contain request_id, correlation_id, trace_id. Provider-specific query details stay in adapters. Provider guides are selected directly from the core, never loaded recursively.
+Supply `evidence_id` (ledger ID such as E7), `purpose` (the question this query answers), and `operation` (`health`, `datasources`, `logs`, or `metrics`). Telemetry requests include `scope.start_time` and `scope.end_time` as timezone-aware ISO timestamps; service/environment are descriptive unless enforced by actual selectors. `identifiers` can contain request_id, correlation_id, trace_id. Provider-specific query details stay in adapters. See [Grafana](grafana.md) only when that provider is relevant.
 
 Search by request ID, correlation ID, trace ID, exact timestamp plus service, endpoint plus narrow time range, error signature, then broader service telemetry. Expand only when an earlier result justifies it. Do not invent identifiers, datasource names, metrics, labels, timestamps, or responses. If the date or timezone is missing, resolve it before querying.
 

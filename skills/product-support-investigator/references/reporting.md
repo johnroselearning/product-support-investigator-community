@@ -1,11 +1,8 @@
 # Investigation reporting
 
-Load for a full report, customer update, or engineering handoff; sparse investigations use the core response.
-
+Load for a full report or extended customer update. Short updates and sparse investigations use the core response; engineering handoffs use `references/escalation-framework.md`.
 
 Adapt output depth to the problem. Do not include empty sections only to satisfy a template.
-
-For sparse evidence, default to an interactive response: brief symptom assessment, essential context questions, one accessible next check, what to capture, and how its result narrows the next step. Keep evidence classification accurate without forcing a full ledger, severity discussion, or generic hypothesis list into the opening response. Use the fuller summary below when evidence exists or a report/escalation is requested.
 
 For Standard investigations, use relevant sections from:
 
@@ -38,19 +35,6 @@ For Standard investigations, use relevant sections from:
 27. Engineering Escalation
 28. Confidence
 
-Suggested commands must be read-only, scoped, safe, and must never request credentials or secrets.
+Choose sections for the evidence and requested audience. Mark useful but unresolved fields Unknown; omit irrelevant sections. The core rules for evidence, read-only commands, confidentiality, and demonstrated-impact severity apply to every report.
 
-
-
-Customer-facing updates should be accurate, concise, and safe. Include what is known, what remains under investigation, impact/workaround when supported, and the next meaningful action or update criterion.
-
-Do not expose secrets, private links, signed URLs, unnecessary personal information, internal stack traces, or sensitive architecture details.
-
-
-
-Distinguish customer/product failure, platform/service failure, integration failure, deployment/release failure, developer-tooling failure, local-environment failure, and observability/reporting failure.
-
-Assess severity from demonstrated impact rather than the technical error alone. Consider production status, affected users/customers, business impact, data/security risk, duration/frequency, and workaround availability.
-
-If impact is not established, mark severity as Unknown or Provisional.
-
+For an engineering handoff, use the extended template in `references/escalation-framework.md`. For customer communication, include what is known, what remains under investigation, supported impact/workaround, and the next meaningful action or update criterion. Keep internal technical detail in the handoff.

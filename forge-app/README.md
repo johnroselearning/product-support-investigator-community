@@ -11,16 +11,19 @@ The first version is deliberately small and safe:
 - Datadog and Zendesk remain optional and are not required for the agent to work
 - No Jira mutation, production change, rollback, or remediation action
 
+## Default instruction loading
+
+The default local and distributable profiles load the self-contained agent prompt and the existing Jira action. They do not register the native skill. The generated native skill directory remains prepared for isolated development validation; its automatic selection is not assumed. This prevents a second full core from being offered alongside the already complete prompt. No essential guidance was removed from the prompt.
+
+Both templates expose the existing optional `support_reference` action input. Existing permission differences are retained: the local installation has `read:jira-user` in addition to the templates' scopes. No scope changed in this work. See [the loading design and development procedure](../docs/behavior-validation/ROVO_LOADING.md).
+
 ## Architecture
 
 ```text
 Rovo / Jira user
       |
       v
-Product Support Investigator (Rovo Agent)
-      |
-      v
-Product Support Investigation (Rovo Skill)
+Product Support Investigator (Rovo Agent + full prompt)
       |
       v
 investigate-jira-issue (Rovo Action)
@@ -37,9 +40,11 @@ Datadog / Zendesk / GitHub / Grafana / other systems
 
 The root `SKILL.md` remains the source methodology. Platform adapters should preserve its evidence model, hypothesis testing, confidence rules, read-only default, and tool-independent fallback.
 
+Run `python3 ../scripts/sync_skill.py` from this directory after editing canonical sources. Both `prompts/investigator.md` and `skills/product-support-investigation/` are generated; do not edit them directly. The agent prompt embeds the full Markdown guidance for installations using the checked-in manifest templates, which do not declare `rovo:skill`. An installation declaring the skill can load supporting Markdown bundled beside its `SKILL.md`; Python helpers are not supported Rovo skill sources or actions. The default manifest registration is described above; no permissions, installation, or deployed environment was changed.
+
 ## Agent, Skill, and Action
 
-This project keeps the three responsibilities separate:
+This project keeps the three responsibilities separate. The following native-skill chain is an optional development profile; default registration uses the agent and action directly:
 
 ```text
 Product Support Investigator Agent
@@ -60,7 +65,7 @@ Jira evidence
 - **Skill** = the reusable evidence-first investigation methodology. It lives in `skills/product-support-investigation/SKILL.md` and defines the workflow, hypothesis discipline, and `Observed` / `Inferred` / `Unknown` output.
 - **Action** = executable Jira evidence retrieval. It is declared in `manifest.yml` and implemented by `src/index.js` using the current user's Jira permissions.
 
-The agent selects the skill for investigation requests; the skill may use the existing read-only action. The skill does not contain Jira REST API code, and the action does not decide the root cause.
+The default agent uses the complete prompt and existing read-only action directly. A separately prepared development profile can register the native skill for loading validation. The skill does not contain Jira REST API code, and the action does not decide the root cause.
 
 ## 1. Register this existing Forge app
 

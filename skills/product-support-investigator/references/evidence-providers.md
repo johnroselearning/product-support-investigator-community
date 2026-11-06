@@ -40,3 +40,14 @@ Use runtime secrets and least-privilege read-only access. Never request secrets 
 Codex and Claude: discover tools exposed by the current host, inspect their schemas and permissions, and select only relevant read-only capabilities. Do not assume a particular MCP server or tool name. Translate requests/results to this contract. Missing tools are a normal fallback. The local CLI is optional and requires Python 3.10+; the skill itself has no runtime dependency.
 
 Forge/Rovo: the existing Jira action and its evidenceVersion 2 payload remain unchanged. A future separate telemetry action must validate tenant and user authorization, enforce datasource/query limits server-side, load secrets only from encrypted runtime/platform storage, and return this envelope. Jira Browse permission alone does not authorize Grafana access. Configure deployment-owned endpoint allowlists and approved egress, never accept arbitrary endpoint URLs or credentials from a model. No Grafana action or egress is enabled in this release.
+
+## Retrieval efficiency
+
+Identify the diagnostic question before retrieval. Use exact identifiers and known
+resource mappings, bounded time windows, relevant fields and small result limits.
+Do not list datasources when an authorized UID is known. Request another page only
+if coverage or the hypothesis requires it; preserve its cursor and query scope.
+Deduplicate identical source facts while retaining contradictions, timestamps,
+exact relevant errors and source locators. Keep full records accessible through
+the authorized source, not in every model payload. Redact before summarizing.
+Missing or truncated evidence stays an explicit limitation, never negative proof.

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "skill_version": "sha256:e6566615ca9667b82d63a78e7e80fdb7ece9642093c39a68a66866b63a3b7df5",
+  "skill_version": "sha256:82456e7864e924ee5c5d7b3376038fa7019da208b4dd65f9bfd8391511ba07c1",
   "checks": {
     "classify_request": "classify_request",
     "decide_skill_usage": "decide_skill_usage",
@@ -13,7 +13,7 @@
     "record_confidence": "calculate_confidence",
     "disclose_missing_evidence": "validate_final_response"
   },
-  "skill_bytes": 5979,
-  "instructions_bytes": 52076,
-  "prompt_hash": "sha256:9726a985163719381de280a7639e53b48c27260f813acbb8e7a6380a36e5ca25"
+  "skill_bytes": 18319,
+  "instructions_bytes": 61643,
+  "prompt_hash": "sha256:1f3a071b155885dd3444104258b2b17d517743b0d606238479c7abe377a1658f"
 }

@@ -1,0 +1,869 @@
+{
+  "version": "1.0",
+  "provenance": "Synthetic route/readiness expectations from the pre-existing fixture evaluator; never sent to investigator.",
+  "cases": [
+    {
+      "id": "explain",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "direct_answer"
+        ],
+        "goals": [
+          "explain"
+        ],
+        "skill": false,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "rewrite",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "direct_answer"
+        ],
+        "goals": [
+          "rewrite"
+        ],
+        "skill": false,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "stack",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_supplied"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [],
+        "max_calls": 0,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "jira",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "fetch_issue",
+            "search_logs"
+          ],
+          [
+            "fetch_issue",
+            "retrieve_trace"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 3,
+        "min_evidence": 2
+      }
+    },
+    {
+      "id": "checkout",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ],
+          [
+            "retrieve_trace"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 2,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "commits",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "direct_retrieval"
+        ],
+        "goals": [
+          "retrieve"
+        ],
+        "skill": false,
+        "clarification": false,
+        "paths": [
+          [
+            "list_commits"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "mixed",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "explain",
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs",
+            "deployment_metadata",
+            "compare_revisions"
+          ],
+          [
+            "deployment_metadata",
+            "search_logs",
+            "compare_revisions"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 4,
+        "min_evidence": 2
+      }
+    },
+    {
+      "id": "hypothetical",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_supplied"
+        ],
+        "goals": [
+          "discuss"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "multiturn",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "environment",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": true,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "ambiguous_scope"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "tenant",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": true,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "missing_input",
+          "ambiguous_scope"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "missing_tool",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "unavailable_tool"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "unavailable",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "unavailable_tool"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "empty",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "empty"
+        ],
+        "max_calls": 1,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "partial",
+      "split": "dev",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "partial"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "stale",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "conflict",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs",
+            "deployment_metadata"
+          ],
+          [
+            "deployment_metadata",
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 3,
+        "min_evidence": 2
+      }
+    },
+    {
+      "id": "injection",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "fetch_issue",
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 2,
+        "min_evidence": 2
+      }
+    },
+    {
+      "id": "sensitive",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_supplied"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [],
+        "max_calls": 0,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "cross_tenant",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "authorization_denial"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "repeat",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "informal",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ],
+          [
+            "retrieve_trace"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 2,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "vendor_neutral",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ],
+          [
+            "retrieve_trace"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 2,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "blame",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "discovery",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "discover_service",
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 2,
+        "min_evidence": 2
+      }
+    },
+    {
+      "id": "change",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose",
+          "change"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "unavailable_capability",
+          "authorization_denial"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "missing_input",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "direct_retrieval"
+        ],
+        "goals": [
+          "retrieve"
+        ],
+        "skill": false,
+        "clarification": true,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "missing_input"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "failure",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "execution_failure"
+        ],
+        "max_calls": 2,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "pagination",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "direct_retrieval"
+        ],
+        "goals": [
+          "retrieve"
+        ],
+        "skill": false,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "partial",
+          "success"
+        ],
+        "max_calls": 2,
+        "min_evidence": 2
+      }
+    },
+    {
+      "id": "metrics",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "query_metrics"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "trace",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "direct_retrieval"
+        ],
+        "goals": [
+          "retrieve"
+        ],
+        "skill": false,
+        "clarification": false,
+        "paths": [
+          [
+            "retrieve_trace"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "repository",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "direct_retrieval"
+        ],
+        "goals": [
+          "retrieve"
+        ],
+        "skill": false,
+        "clarification": false,
+        "paths": [
+          [
+            "read_repository_file"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "sparse",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": true,
+        "paths": [
+          []
+        ],
+        "statuses": [
+          "missing_input"
+        ],
+        "max_calls": 0,
+        "min_evidence": 0
+      }
+    },
+    {
+      "id": "resolve_first",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "fetch_issue",
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "success"
+        ],
+        "max_calls": 2,
+        "min_evidence": 2
+      }
+    },
+    {
+      "id": "retrieved_conflict",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": true,
+        "paths": [
+          [
+            "fetch_issue"
+          ]
+        ],
+        "statuses": [
+          "ambiguous_scope"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    },
+    {
+      "id": "tool_fallback",
+      "split": "heldout",
+      "expected": {
+        "routes": [
+          "investigate_external"
+        ],
+        "goals": [
+          "diagnose"
+        ],
+        "skill": true,
+        "clarification": false,
+        "paths": [
+          [
+            "search_logs"
+          ]
+        ],
+        "statuses": [
+          "unavailable_tool",
+          "success"
+        ],
+        "max_calls": 1,
+        "min_evidence": 1
+      }
+    }
+  ]
+}
